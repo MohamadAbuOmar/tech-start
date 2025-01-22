@@ -1,7 +1,7 @@
 import { MapPin, Phone, Mail } from "lucide-react";
-import { ContactForm } from "./contact-form";
-import { ContactAnimation } from "./contact-animation";
-import { SocialLinks } from "./social-links";
+import { ContactForm } from "../../../components/Contact-us/contact-form";
+import { ContactAnimation } from "../../../components/Contact-us/contact-animation";
+import { SocialLinks } from "../../../components/Contact-us/social-links";
 
 export default function ContactPage() {
   return (
