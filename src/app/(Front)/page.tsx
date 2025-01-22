@@ -1,16 +1,14 @@
-import dynamic from "next/dynamic"
 import React from "react"
+import dynamic from "next/dynamic"
 import ProgramsSec from "@/components/shared/program/ProgramsSec"
 import { MediaCenter } from "@/components/shared/Hero/MediaCenter"
 import SafeguardsBanner from "@/components/shared/banners/SafeguardsBanner"
 
-const Hero = dynamic(() => import("@/components/shared/Hero/Hero"), {
-  ssr: false,
+const ClientHero = dynamic(() => import("@/components/shared/Hero/ClientHero"), {
   loading: () => <div className="h-[80vh] bg-gray-100 animate-pulse" />,
 })
 
-const StatsCountUp = dynamic(() => import("@/components/Stats/StatsCountUp"), {
-  ssr: false,
+const ClientStatsCountUp = dynamic(() => import("@/components/Stats/ClientStatsCountUp"), {
   loading: () => <div className="h-40 bg-gray-50 animate-pulse" />,
 })
 
@@ -20,9 +18,9 @@ export const revalidate = 0
 export default function Page() {
   return (
     <main className="relative">
-      <Hero />
+      <ClientHero />
       <section>
-        <StatsCountUp />
+        <ClientStatsCountUp />
       </section>
       <section>
         <ProgramsSec />
