@@ -1,10 +1,11 @@
-import SafeG from '@/components/safeG/SafeG'
-import React from 'react'
+import SafeG from "@/components/safeG/SafeG";
 
-export default function page() {
+export const dynamic = "force-dynamic";
+
+export default function SafeguardsPage() {
   return (
     <div>
       <SafeG />
     </div>
-  )
+  );
 }
