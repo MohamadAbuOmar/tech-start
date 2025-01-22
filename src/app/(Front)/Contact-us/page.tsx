@@ -1,7 +1,10 @@
-import { MapPin, Phone, Mail } from "lucide-react";
-import { ContactForm } from "../../../components/Contact-us/contact-form";
-import { ContactAnimation } from "../../../components/Contact-us/contact-animation";
-import { SocialLinks } from "../../../components/Contact-us/social-links";
+import { ContactAnimation } from "@/components/Contact-us/contact-animation"
+import { ContactForm } from "@/components/Contact-us/contact-form"
+import { SocialLinks } from "@/components/Contact-us/social-links"
+import { MapPin, Phone, Mail } from "lucide-react"
+
+
+export const dynamic = "force-dynamic"
 
 export default function ContactPage() {
   return (
@@ -46,5 +49,6 @@ export default function ContactPage() {
         </div>
       </div>
     </div>
-  );
+  )
 }
+
