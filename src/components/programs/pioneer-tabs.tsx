@@ -3,22 +3,17 @@
 import React from 'react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { motion } from 'framer-motion'
-import { UpskillContent } from './content/UpskillContent'
-import { StudentInternshipContent } from './content/StudentInternshipContent'
-import { TrainToHireContent } from './content/TrainToHireContent'
-import { OnTheJobContent } from './content/OnTheJobContent'
-import { ExpatriateContent } from './content/ExpatriateContent'
+import { PioneerOverviewContent } from './content/PioneerOverviewContent'
+import { PioneerGrantsContent } from './content/PioneerGrantsContent'
 import FAQsPage from '@/app/(Front)/FAQs/page'
 
-export default function GrantTabs({ defaultTab = "upskill" }) {
+export default function PioneerTabs({ defaultTab = "overview" }) {
     const [activeTab, setActiveTab] = React.useState(defaultTab)
 
     React.useEffect(() => {
-        // Get hash from URL and set active tab
         const hash = window.location.hash.replace('#', '')
         if (hash) {
             setActiveTab(hash)
-            // Smooth scroll to tab content
             setTimeout(() => {
                 const element = document.getElementById(hash)
                 if (element) {
@@ -29,11 +24,8 @@ export default function GrantTabs({ defaultTab = "upskill" }) {
     }, [])
 
     const tabs = [
-        { value: "upskill", label: "UPSKILL" },
-        { value: "student", label: "Student Internship" },
-        { value: "train-to-hire", label: "Train-to-hire" },
-        { value: "on-the-job", label: "On-the-job Training" },
-        { value: "expatriate", label: "Expatriate and Diaspora" },
+        { value: "overview", label: "Overview" },
+        { value: "grants", label: "Available Grants" },
         { value: "faq", label: "FAQ" },
     ]
 
@@ -52,9 +44,9 @@ export default function GrantTabs({ defaultTab = "upskill" }) {
                                     key={tab.value}
                                     value={tab.value}
                                     className="flex-shrink-0 md:w-full px-4 py-2 md:py-3 text-center transition-all duration-200 ease-in-out
-                                               text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-gray-900
-                                               data-[state=active]:bg-primary data-[state=active]:text-primary-foreground
-                                               data-[state=active]:shadow-md rounded-md whitespace-nowrap md:whitespace-normal"
+                                             text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-gray-900
+                                             data-[state=active]:bg-primary data-[state=active]:text-primary-foreground
+                                             data-[state=active]:shadow-md rounded-md whitespace-nowrap md:whitespace-normal"
                                 >
                                     {tab.label}
                                 </TabsTrigger>
@@ -63,20 +55,11 @@ export default function GrantTabs({ defaultTab = "upskill" }) {
                     </div>
 
                     <div className='flex-grow overflow-auto p-4 md:p-6'>
-                        <TabsContent value="upskill">
-                            <UpskillContent />
+                        <TabsContent value="overview">
+                            <PioneerOverviewContent />
                         </TabsContent>
-                        <TabsContent value="student">
-                            <StudentInternshipContent />
-                        </TabsContent>
-                        <TabsContent value="train-to-hire">
-                            <TrainToHireContent />
-                        </TabsContent>
-                        <TabsContent value="on-the-job">
-                            <OnTheJobContent />
-                        </TabsContent>
-                        <TabsContent value="expatriate">
-                            <ExpatriateContent />
+                        <TabsContent value="grants">
+                            <PioneerGrantsContent />
                         </TabsContent>
                         <TabsContent value="faq">
                             <FAQsPage />
@@ -87,4 +70,3 @@ export default function GrantTabs({ defaultTab = "upskill" }) {
         </div>
     )
 }
-

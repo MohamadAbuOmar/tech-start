@@ -40,10 +40,14 @@ export const ProgramsDropdown = ({
       subPrograms: [
         {
           id: "upskill",
-          name: "UpSkill",
+          name: "UPSKILL",
+          href: "/programs/upskill",
           pilotPoints: [
-            { name: "Pilot Point 1", href: "/programs/upskill/1" },
-            { name: "Pilot Point 2", href: "/programs/upskill/2" },
+            { name: "Student Internship", href: "/programs/upskill#student" },
+            { name: "Train-to-hire", href: "/programs/upskill#train-to-hire" },
+            { name: "On-the-job Training", href: "/programs/upskill#on-the-job" },
+            { name: "Expatriate and Diaspora", href: "/programs/upskill#expatriate" },
+            { name: "FAQ", href: "/programs/upskill#faq" },
           ]
         },
         {
@@ -60,6 +64,17 @@ export const ProgramsDropdown = ({
           pilotPoints: [
             { name: "Pilot Point 1", href: "/programs/femtech/1" },
             { name: "Pilot Point 2", href: "/programs/femtech/2" },
+          ]
+        },
+        {
+          id: "pioneer",
+          name: "Pioneer",
+          href: "/programs/pioneer",
+          pilotPoints: [
+            { name: "Overview", href: "/programs/pioneer#overview" },
+            { name: "Eligibility", href: "/programs/pioneer#eligibility" },
+            { name: "Benefits", href: "/programs/pioneer#benefits" },
+            { name: "FAQ", href: "/programs/pioneer#faq" },
           ]
         },
       ]
