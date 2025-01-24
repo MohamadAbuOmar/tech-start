@@ -1,16 +1,10 @@
 "use client";
 
 import * as React from "react";
-import {Image, Layers, Radio, Video, Home} from 'lucide-react';
+import { Layers, Radio, Home, Users, Phone } from 'lucide-react';
 import { usePathname } from 'next/navigation';
-
 import { NavMain } from "./nav-main";
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarFooter,
-  SidebarRail,
-} from "@/components/ui/sidebar";
+import { Sidebar, SidebarContent, SidebarFooter, SidebarRail } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
@@ -30,37 +24,36 @@ const data: { navMain: NavItem[] } = {
       icon: Home,
     },
     {
-      title: "Pages",
+      title: "Home Page",
       url: "#",
-      icon: Layers,
+      icon: Home,
       items: [
         {
-          title: "Home|Hero",
+          title: "Hero Section",
           url: "/admin/pages/home",
         },
         {
-          title: "Home|StatsUpCount",
+          title: "Stats Counter",
           url: "/admin/pages/stats",
         },
         {
-          title: "Home|Programs",
+          title: "Programs Section",
           url: "/admin/pages/programs",
         },
         {
           title: "Footer",
           url: "/admin/pages/footer",
         },
+      ]
+    },
+    {
+      title: "About Us",
+      url: "#",
+      icon: Users,
+      items: [
         {
-          title: "Palestinian IT Leads",
-          url: "/admin/beneficiaries",
-        },
-        {
-          title: "About Us",
+          title: "About Page",
           url: "/admin/pages/about",
-        },
-        {
-          title: "Focus Areas",
-          url: "/admin/pages/focusareas",
         },
         {
           title: "Team Members",
@@ -70,12 +63,34 @@ const data: { navMain: NavItem[] } = {
           title: "Work With Us",
           url: "/admin/pages/work-with-us",
         },
+      ]
+    },
+    {
+      title: "Programs & Focus",
+      url: "#",
+      icon: Layers,
+      items: [
+        {
+          title: "Palestinian IT Leads",
+          url: "/admin/beneficiaries",
+        },
+        {
+          title: "Focus Areas",
+          url: "/admin/pages/focusareas",
+        },
+      ]
+    },
+    {
+      title: "Contact & Support",
+      url: "#",
+      icon: Phone,
+      items: [
         {
           title: "Contact Submissions",
           url: "/admin/pages/contact-submissions",
         },
         {
-          title: "Complaints Submissions",
+          title: "Complaints",
           url: "/admin/complaints",
         },
         {
@@ -86,7 +101,7 @@ const data: { navMain: NavItem[] } = {
           title: "Safeguards",
           url: "/admin/safeguards",
         },
-      ],
+      ]
     },
     {
       title: "Media Center",
@@ -94,51 +109,54 @@ const data: { navMain: NavItem[] } = {
       icon: Radio,
       items: [
         {
-          title: "Create A Blog",
-          url: "/admin/blog/create",
-        },
-        {
-          title: "All Blogs",
-          url: "/admin/blog",
-        },
-      ],
-    },
-    {
-      title: "Gallery",
-      url: "#",
-      icon: Image,
-      items: [
-        {
-          title: "Image Gallery",
+          title: "Blog",
           url: "#",
-          icon: Image,
           items: [
             {
-              title: "All Images",
-              url: "/admin/ImageGallery",
+              title: "Create Blog",
+              url: "/admin/blog/create",
             },
             {
-              title: "Create Image Gallery",
-              url: "/admin/ImageGallery/create",
+              title: "All Blogs",
+              url: "/admin/blog",
             },
-          ],
+          ]
         },
         {
-          title: "Video Gallery",
+          title: "Gallery",
           url: "#",
-          icon: Video,
           items: [
             {
-              title: "All Videos",
-              url: "/admin/VideoGallery",
+              title: "Images",
+              url: "#",
+              items: [
+                {
+                  title: "All Images",
+                  url: "/admin/ImageGallery",
+                },
+                {
+                  title: "Create Image Gallery",
+                  url: "/admin/ImageGallery/create",
+                },
+              ]
             },
             {
-              title: "Create Video Gallery",
-              url: "/admin/VideoGallery/create",
+              title: "Videos",
+              url: "#",
+              items: [
+                {
+                  title: "All Videos",
+                  url: "/admin/VideoGallery",
+                },
+                {
+                  title: "Create Video Gallery",
+                  url: "/admin/VideoGallery/create",
+                },
+              ]
             },
-          ],
+          ]
         },
-      ],
+      ]
     },
   ],
 };

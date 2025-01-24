@@ -43,6 +43,7 @@ export const ProgramsDropdown = ({
           name: "UPSKILL",
           href: "/programs/upskill",
           pilotPoints: [
+            { name: "Overview", href: "/programs/upskill#overview" },
             { name: "Student Internship", href: "/programs/upskill#student" },
             { name: "Train-to-hire", href: "/programs/upskill#train-to-hire" },
             { name: "On-the-job Training", href: "/programs/upskill#on-the-job" },
@@ -65,18 +66,7 @@ export const ProgramsDropdown = ({
             { name: "Pilot Point 1", href: "/programs/femtech/1" },
             { name: "Pilot Point 2", href: "/programs/femtech/2" },
           ]
-        },
-        {
-          id: "pioneer",
-          name: "Pioneer",
-          href: "/programs/pioneer",
-          pilotPoints: [
-            { name: "Overview", href: "/programs/pioneer#overview" },
-            { name: "Eligibility", href: "/programs/pioneer#eligibility" },
-            { name: "Benefits", href: "/programs/pioneer#benefits" },
-            { name: "FAQ", href: "/programs/pioneer#faq" },
-          ]
-        },
+        }
       ]
     },
     {
@@ -86,9 +76,14 @@ export const ProgramsDropdown = ({
         {
           id: "pioneer",
           name: "Pioneer",
+          href: "/programs/pioneer",
           pilotPoints: [
-            { name: "Pilot Point 1", href: "/programs/pioneer/1" },
-            { name: "Pilot Point 2", href: "/programs/pioneer/2" },
+            { name: "Overview", href: "/programs/pioneer#overview" },
+            { name: "New IT Service Operations", href: "/programs/pioneer#it-service" },
+            { name: "IT Training Providers", href: "/programs/pioneer#training" },
+            { name: "HR Service Providers", href: "/programs/pioneer#hr-service" },
+            { name: "Business Infrastructure", href: "/programs/pioneer#infrastructure" },
+            { name: "FAQ", href: "/programs/pioneer#faq" },
           ]
         },
         {
@@ -106,9 +101,9 @@ export const ProgramsDropdown = ({
             { name: "Pilot Point 1", href: "/programs/horizon/1" },
             { name: "Pilot Point 2", href: "/programs/horizon/2" },
           ]
-        },
+        }
       ]
-    },
+    }
   ];
 
   return (

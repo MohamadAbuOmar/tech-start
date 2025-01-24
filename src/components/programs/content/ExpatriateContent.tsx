@@ -1,6 +1,8 @@
 import { motion } from 'framer-motion'
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import Link from "next/link"
 
 export function ExpatriateContent() {
   return (
@@ -13,7 +15,7 @@ export function ExpatriateContent() {
         <CardHeader className="bg-primary text-primary-foreground p-6">
           <CardTitle className="text-3xl font-bold">Expatriate and Diaspora Stipends Grant</CardTitle>
         </CardHeader>
-        <CardContent className="p-6 space-y-6">
+        <CardContent className="p-6 space-y-8">
           <div className="bg-gray-50 p-4 rounded-lg">
             <p className="text-gray-700 leading-relaxed">
               Supports international staff and Palestinian diaspora with senior expertise to build technical and managerial capacity in Palestinian IT firms. Valid for up to two years with performance-based evaluation.
@@ -89,6 +91,15 @@ export function ExpatriateContent() {
                 </CardContent>
               </Card>
             </div>
+          </div>
+
+          <div className="flex gap-4 justify-center">
+            <Button asChild variant="outline">
+              <Link href="#">View Guidelines</Link>
+            </Button>
+            <Button asChild>
+              <Link href="#">Apply Now</Link>
+            </Button>
           </div>
         </CardContent>
       </Card>

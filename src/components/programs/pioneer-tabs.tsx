@@ -3,9 +3,12 @@
 import React from 'react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { motion } from 'framer-motion'
-import { PioneerOverviewContent } from './content/PioneerOverviewContent'
-import { PioneerGrantsContent } from './content/PioneerGrantsContent'
+import { PioneerOverview } from './content/PioneerOverview'
 import FAQsPage from '@/app/(Front)/FAQs/page'
+import { NewITServiceContent } from './content/NewITServiceContent'
+import { ITTrainingContent } from './content/ITTrainingContent'
+import { HRServiceContent } from './content/HRServiceContent'
+import { InfrastructureContent } from './content/InfrastructureContent'
 
 export default function PioneerTabs({ defaultTab = "overview" }) {
     const [activeTab, setActiveTab] = React.useState(defaultTab)
@@ -25,7 +28,10 @@ export default function PioneerTabs({ defaultTab = "overview" }) {
 
     const tabs = [
         { value: "overview", label: "Overview" },
-        { value: "grants", label: "Available Grants" },
+        { value: "it-service", label: "New IT Service Operations" },
+        { value: "training", label: "IT Training Providers" },
+        { value: "hr-service", label: "HR Service Providers" },
+        { value: "infrastructure", label: "Business Infrastructure" },
         { value: "faq", label: "FAQ" },
     ]
 
@@ -56,10 +62,19 @@ export default function PioneerTabs({ defaultTab = "overview" }) {
 
                     <div className='flex-grow overflow-auto p-4 md:p-6'>
                         <TabsContent value="overview">
-                            <PioneerOverviewContent />
+                            <PioneerOverview />
                         </TabsContent>
-                        <TabsContent value="grants">
-                            <PioneerGrantsContent />
+                        <TabsContent value="it-service">
+                            <NewITServiceContent />
+                        </TabsContent>
+                        <TabsContent value="training">
+                            <ITTrainingContent />
+                        </TabsContent>
+                        <TabsContent value="hr-service">
+                            <HRServiceContent />
+                        </TabsContent>
+                        <TabsContent value="infrastructure">
+                            <InfrastructureContent />
                         </TabsContent>
                         <TabsContent value="faq">
                             <FAQsPage />

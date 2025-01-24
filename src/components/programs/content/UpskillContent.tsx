@@ -1,7 +1,35 @@
 import { motion } from 'framer-motion'
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
 
 export function UpskillContent() {
+  const grants = [
+    {
+      title: "Student Internship",
+      description: "For students in last 2 years of university studies",
+      icon: "🎓",
+      highlight: "Up to $500 stipend"
+    },
+    {
+      title: "Train-to-hire",
+      description: "For graduates and new hires needing practical skills",
+      icon: "💼",
+      highlight: "Up to $1,200 stipend"
+    },
+    {
+      title: "On-the-job Training",
+      description: "For new IT staff working on international projects",
+      icon: "🌐",
+      highlight: "International buyer focused"
+    },
+    {
+      title: "Expatriate & Diaspora",
+      description: "For international staff and Palestinian diaspora",
+      icon: "🌍",
+      highlight: "Up to 70% salary coverage"
+    }
+  ]
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -13,44 +41,30 @@ export function UpskillContent() {
           <CardTitle className="text-3xl font-bold">UPSKILL PROGRAM (OPEN)</CardTitle>
         </CardHeader>
         <CardContent className="p-6 space-y-6">
-          <p className="text-lg text-gray-700 leading-relaxed">
-            The Upskill Program focuses on helping IT firms (including tech and tech-enabled startups) 
-            upskill their workforce to scale up their business, increase their opportunities for growth, 
-            and to attract new local and international clients.
-          </p>
-          
-          <h3 className="text-xl font-semibold text-gray-800">The UpSkill Program will help upgrade the skills of the Palestinian IT service workforce through provision of stipends through the following window grants:</h3>
-          
-          <div className="grid gap-6">
-            {[
-              {
-                number: "01",
-                title: "Student Internship Stipends Grant",
-                description: "Available to Students in the last 2 years of their university studies."
-              },
-              {
-                number: "02",
-                title: "Train-to-hire Stipends Grant",
-                description: "Available to University Graduates, IT Diploma and IT related certificates holders, and new hires who need to gain knowledge and practical skills in mid or advanced-level value added IT services."
-              },
-              {
-                number: "03",
-                title: "On-the-job Training Stipends Grant",
-                description: "Covers new IT staff looking to gain knowledge and practical skills in mid-level or advanced-level value added IT services that cannot be found easily in the Palestinian labor force."
-              },
-              {
-                number: "04",
-                title: "Expatriate and Diaspora Stipends Grant",
-                description: "Supports international staff, including Arab-Palestinian living in Israel, and Palestinians in the Diaspora with senior technological expertise or leadership experience."
-              }
-            ].map((item) => (
-              <Card key={item.number} className="overflow-hidden border-l-4 border-primary">
-                <CardContent className="p-4 flex items-start gap-4">
-                  <span className="text-4xl font-bold text-primary/20">{item.number}</span>
-                  <div>
-                    <h4 className="text-xl font-semibold mb-2 text-primary">{item.title}</h4>
-                    <p className="text-gray-600">{item.description}</p>
+          <div className="bg-gray-50 p-6 rounded-lg">
+            <p className="text-lg text-gray-700 leading-relaxed">
+              The Upskill Program focuses on helping IT firms (including tech and tech enabled startups) 
+              upskill their workforce to scale up their business, increase their opportunities for growth, 
+              and to attract new local and international clients.
+            </p>
+          </div>
+
+          <div className="grid gap-6 md:grid-cols-2">
+            {grants.map((grant, index) => (
+              <Card key={index} className="overflow-hidden hover:shadow-lg transition-shadow">
+                <CardHeader className="bg-gray-50">
+                  <div className="flex items-center gap-3">
+                    <span className="text-4xl">{grant.icon}</span>
+                    <CardTitle className="text-xl font-semibold text-primary">
+                      {grant.title}
+                    </CardTitle>
                   </div>
+                </CardHeader>
+                <CardContent className="p-6">
+                  <p className="text-gray-700 mb-4">{grant.description}</p>
+                  <Badge variant="secondary" className="bg-blue-50 text-blue-700">
+                    {grant.highlight}
+                  </Badge>
                 </CardContent>
               </Card>
             ))}

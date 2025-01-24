@@ -10,7 +10,7 @@ import { OnTheJobContent } from './content/OnTheJobContent'
 import { ExpatriateContent } from './content/ExpatriateContent'
 import FAQsPage from '@/app/(Front)/FAQs/page'
 
-export default function GrantTabs({ defaultTab = "upskill" }) {
+export default function GrantTabs({ defaultTab = "overview" }) {
     const [activeTab, setActiveTab] = React.useState(defaultTab)
 
     React.useEffect(() => {
@@ -29,7 +29,7 @@ export default function GrantTabs({ defaultTab = "upskill" }) {
     }, [])
 
     const tabs = [
-        { value: "upskill", label: "UPSKILL" },
+        { value: "overview", label: "Overview" },
         { value: "student", label: "Student Internship" },
         { value: "train-to-hire", label: "Train-to-hire" },
         { value: "on-the-job", label: "On-the-job Training" },
@@ -63,7 +63,7 @@ export default function GrantTabs({ defaultTab = "upskill" }) {
                     </div>
 
                     <div className='flex-grow overflow-auto p-4 md:p-6'>
-                        <TabsContent value="upskill">
+                        <TabsContent value="overview">
                             <UpskillContent />
                         </TabsContent>
                         <TabsContent value="student">

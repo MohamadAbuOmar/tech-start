@@ -1,6 +1,8 @@
 import { motion } from 'framer-motion'
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import Link from "next/link"
 
 export function OnTheJobContent() {
   return (
@@ -90,6 +92,15 @@ export function OnTheJobContent() {
                 </CardContent>
               </Card>
             </div>
+          </div>
+
+          <div className="flex gap-4 justify-center">
+            <Button asChild variant="outline">
+              <Link href="#">View Guidelines</Link>
+            </Button>
+            <Button asChild>
+              <Link href="#">Apply Now</Link>
+            </Button>
           </div>
         </CardContent>
       </Card>
