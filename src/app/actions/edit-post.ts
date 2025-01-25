@@ -52,14 +52,9 @@ export async function editPost(id: number, formData: FormData) {
         ...validatedFields.data,
         imageUrl: validatedFields.data.imageUrl || null,
         tags: {
-          disconnect: existingPost.tags,
-          connectOrCreate: validatedFields.data.tags?.map((tag) => ({
-            where: { name: tag },
-            create: {
-              name: tag,
-              slug: tag.toLowerCase().replace(/\s+/g, "-"),
-            },
-          })) || [],
+          set: validatedFields.data.tags.map(tagId => ({ 
+            id: parseInt(tagId, 10)  // Convert string ID to number
+          })),
         },
       },
     });

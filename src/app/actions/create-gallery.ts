@@ -14,6 +14,7 @@ export async function createGallery(formData: FormData) {
     imageUrls: formData.getAll("imageUrls"),
     imageTitles_en: formData.getAll("imageTitles_en"),
     imageTitles_ar: formData.getAll("imageTitles_ar"),
+    imageFeatured: formData.getAll("imageFeatured").map(value => value === "true"),
   };
 
   const validatedFields = createGallerySchema.safeParse(rawData);
@@ -36,6 +37,7 @@ export async function createGallery(formData: FormData) {
             url,
             title_en: validatedFields.data.imageTitles_en[index] || null,
             title_ar: validatedFields.data.imageTitles_ar[index] || null,
+            featured: validatedFields.data.imageFeatured[index] || false,
           })),
         },
       },

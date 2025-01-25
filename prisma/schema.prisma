@@ -31,17 +31,15 @@ model Post {
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
-  tags Tag[] @relation("PostToTag")
+  tags Tag[]
 }
 
 model Tag {
-  id        Int      @id @default(autoincrement())
-  name      String   @unique
-  slug      String   @unique
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
-
-  posts Post[] @relation("PostToTag")
+  id      Int      @id @default(autoincrement())
+  name_en String   
+  name_ar String
+  slug    String   @unique
+  posts   Post[]
 }
 
 model Gallery {
@@ -49,7 +47,7 @@ model Gallery {
   title_en  String
   title_ar  String
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  updatedAt DateTime @default(now())
   images    Image[]
 }
 
@@ -58,6 +56,7 @@ model Image {
   url       String
   title_en  String?
   title_ar  String?
+  featured  Boolean  @default(false)
   createdAt DateTime @default(now())
   galleryId String
   gallery   Gallery  @relation(fields: [galleryId], references: [id])
@@ -68,7 +67,7 @@ model VideoGallery {
   title_en  String
   title_ar  String
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  updatedAt DateTime @default(now())
   videos    Video[]
 }
 
@@ -79,6 +78,7 @@ model Video {
   title_ar       String
   description_en String?      @db.Text
   description_ar String?      @db.Text
+  type           String       @default("local")
   createdAt      DateTime     @default(now())
   galleryId      String
   gallery        VideoGallery @relation(fields: [galleryId], references: [id])
@@ -231,7 +231,7 @@ model Focusarea {
   descriptionAr String
   cards         FocusareaCard[]
   createdAt     DateTime        @default(now())
-  updatedAt     DateTime        @updatedAt
+  updatedAt     DateTime        @default(now())
 }
 
 model FocusareaCard {
@@ -291,8 +291,8 @@ model ContactSubmission {
 model Complaint {
   id                      String                @id @default(cuid())
   complaintNumber         String                @unique
-  type                    String // REGULAR or ANONYMOUS
-  status                  String                @default("PENDING") // PENDING, IN_REVIEW, RESOLVED, REJECTED
+  type                    String
+  status                  String                @default("PENDING") 
   submittedAt             DateTime              @default(now())
   updatedAt               DateTime              @updatedAt
   complainantType         String?
@@ -342,17 +342,17 @@ model ComplaintNote {
 
 model Safeguard {
   id                 String   @id @default(cuid())
-  domain             String // e.g. "ESMF"
+  domain             String 
   title_en           String
   title_ar           String
-  tagline_en         String // Short subtitle
+  tagline_en         String 
   tagline_ar         String
   description_en     String   @db.Text
   description_ar     String   @db.Text
   longDescription_en String?  @db.Text
   longDescription_ar String?  @db.Text
-  bgColor            String // e.g. "from-purple-100 to-purple-200"
-  attachmentUrl      String? // e.g. "/documents/ESMF.pdf"
+  bgColor            String 
+  attachmentUrl      String?
   imageUrl           String?
   createdAt          DateTime @default(now())
   updatedAt          DateTime @updatedAt

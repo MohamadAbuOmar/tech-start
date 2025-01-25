@@ -2,7 +2,7 @@
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -27,6 +27,7 @@ import { CreateGalleryInput, createGallerySchema } from "@/lib/schema/schema";
 import { MultiImageUpload } from "@/lib/MultiImageUpload";
 import { useRouter } from "next/navigation";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Checkbox } from "@/components/ui/checkbox";
 
 export default function CreateImageGallery() {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -42,8 +43,26 @@ export default function CreateImageGallery() {
       imageUrls: [],
       imageTitles_en: [],
       imageTitles_ar: [],
+      imageFeatured: [],
     },
   });
+
+  const handleFeaturedChange = (index: number, checked: boolean) => {
+    const currentFeatured = form.getValues("imageFeatured");
+    const newFeatured = currentFeatured.map((_, i) => i === index ? checked : false);
+    form.setValue("imageFeatured", newFeatured);
+  };
+
+  useEffect(() => {
+    const images = form.watch("imageUrls");
+    if (images.length > 0) {
+      const featured = form.getValues("imageFeatured");
+      if (!featured.some(Boolean)) {
+        const newFeatured = images.map((_, index) => index === 0);
+        form.setValue("imageFeatured", newFeatured);
+      }
+    }
+  }, [form]);
 
   async function onSubmit(data: CreateGalleryInput) {
     setIsSubmitting(true);
@@ -217,6 +236,26 @@ export default function CreateImageGallery() {
                           />
                         </FormControl>
                         <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name={`imageFeatured.${index}`}
+                    render={({ field }) => (
+                      <FormItem className="flex flex-row items-center space-x-3 space-y-0">
+                        <FormControl>
+                          <Checkbox
+                            checked={field.value}
+                            onCheckedChange={(checked) => {
+                              handleFeaturedChange(index, checked as boolean);
+                            }}
+                          />
+                        </FormControl>
+                        <FormLabel>Set as Featured Image</FormLabel>
+                        <FormDescription>
+                          One image must be selected as featured
+                        </FormDescription>
                       </FormItem>
                     )}
                   />

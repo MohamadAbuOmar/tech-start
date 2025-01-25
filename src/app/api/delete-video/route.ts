@@ -4,12 +4,18 @@ import path from 'path'
 
 export async function POST(request: Request) {
   try {
-    const { url } = await request.json()
+    const { url, type } = await request.json()
 
     if (!url) {
       return NextResponse.json({ success: false, error: 'No URL provided' }, { status: 400 })
     }
 
+    // If it's a YouTube video, just return success since we don't need to delete any files
+    if (type === 'youtube') {
+      return NextResponse.json({ success: true })
+    }
+
+    // Handle local video deletion
     const publicPath = path.join(process.cwd(), 'public')
     const relativePath = url.startsWith('/') ? url.slice(1) : url
     const filePath = path.join(publicPath, relativePath)
@@ -20,21 +26,19 @@ export async function POST(request: Request) {
 
     try {
       await fs.access(filePath)
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    } catch (error) {
-      console.error('File not found:', filePath)
-      return NextResponse.json({ success: false, error: 'File not found' }, { status: 404 })
-    }
-
-    try {
       await fs.unlink(filePath)
       return NextResponse.json({ success: true })
     } catch (error) {
-      console.error('Error deleting file:', error)
-      return NextResponse.json({ success: false, error: 'Failed to delete file', details: (error as Error).message }, { status: 500 })
+      console.error('File operation error:', error)
+      // Don't treat file not found as an error for idempotency
+      return NextResponse.json({ success: true })
     }
   } catch (error) {
     console.error('Unexpected error:', error)
-    return NextResponse.json({ success: false, error: 'Unexpected error occurred', details: (error as Error).message }, { status: 500 })
+    return NextResponse.json({ 
+      success: false, 
+      error: 'Unexpected error occurred', 
+      details: error instanceof Error ? error.message : 'Unknown error'
+    }, { status: 500 })
   }
 }

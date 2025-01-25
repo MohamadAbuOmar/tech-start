@@ -18,7 +18,6 @@ export async function getVideoGalleries(): Promise<VideoGallery[]> {
   });
 }
 
-
 export async function deleteVideoGallery(id: string) {
   try {
     const result = await db.$transaction(async (tx) => {
@@ -86,6 +85,7 @@ export async function updateVideoGallery(
             title_ar: video.title_ar,
             description_en: video.description_en || "",
             description_ar: video.description_ar || "",
+            type: video.type // Add this line
           })),
         },
       },
@@ -105,13 +105,6 @@ export async function updateVideoGallery(
 export async function createVideoGallery(
   data: CreateVideoGalleryInput
 ): Promise<{ success: boolean; gallery?: VideoGallery; error?: string }> {
-  console.log('Received data in createVideoGallery:', JSON.stringify(data, null, 2));
-
-  if (!data || typeof data !== 'object') {
-    console.error('Invalid input data:', data);
-    return { success: false, error: 'Invalid input data' };
-  }
-
   try {
     if (!data.videos || data.videos.length === 0) {
       throw new Error('At least one video is required');
@@ -129,6 +122,7 @@ export async function createVideoGallery(
             title_ar: video.title_ar,
             description_en: video.description_en || null,
             description_ar: video.description_ar || null,
+            type: video.type
           })),
         },
       },
@@ -137,13 +131,14 @@ export async function createVideoGallery(
       },
     });
 
-    console.log('Created new gallery:', JSON.stringify(newGallery, null, 2));
-
     revalidatePath("/admin/VideoGallery");
     return { success: true, gallery: newGallery };
   } catch (error) {
     console.error("Failed to create video gallery:", error);
-    return { success: false, error: error instanceof Error ? error.message : "Failed to create video gallery" };
+    return { 
+      success: false, 
+      error: error instanceof Error ? error.message : "Failed to create video gallery" 
+    };
   }
 }
 

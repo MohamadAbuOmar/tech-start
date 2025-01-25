@@ -1,42 +1,32 @@
-import { notFound } from "next/navigation";
-import db from "@/app/db/db";
-import EditGalleryForm from "@/components/admin/Gallary/Image/EditGalleryForm";
-
-
+import { Suspense } from 'react';
+import EditImageGallery from '@/components/admin/Gallary/EditImageGallery';
+import db from '@/app/db/db';
 
 async function getGallery(id: string) {
-    const gallery = await db.gallery.findUnique({
-        where: { id },
-        include: { images: true },
-    });
+  const gallery = await db.gallery.findUnique({
+    where: { id },
+    include: { images: true },
+  });
+  
+  if (!gallery) return null;
 
-    if (!gallery) {
-        notFound();
-    }
-
-    return gallery;
+  return {
+    ...gallery,
+    createdAt: gallery.createdAt.toISOString(),
+  };
 }
 
+export default async function EditGalleryPage({ params }: { params: { id: string } }) {
+  const gallery = await getGallery(params.id);
 
-export default async function EditGalleryPage({ params }: { params: Promise<{ id: string }> }) {
-    const { id } = await params;
+  if (!gallery) {
+    return <div>Gallery not found</div>;
+  }
 
-    const gallery = await getGallery(id);
-    const formattedGallery = {
-        ...gallery,
-        createdAt: gallery.createdAt.toISOString(),
-        updatedAt: gallery.updatedAt.toISOString(),
-        images: gallery.images.map(img => ({
-            ...img,
-            createdAt: img.createdAt.toISOString()
-        }))
-    };
-
-    return (
-        <div className="container mx-auto py-10">
-            <h1 className="text-2xl font-bold mb-5">Edit Gallery</h1>
-            <EditGalleryForm gallery={formattedGallery} />
-        </div>
-    );
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <EditImageGallery gallery={gallery} />
+    </Suspense>
+  );
 }
 

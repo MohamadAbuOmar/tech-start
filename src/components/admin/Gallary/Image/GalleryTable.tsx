@@ -33,6 +33,15 @@ export function GalleryTable({ initialGalleries }: GalleryTableProps) {
   const { toast } = useToast();
   const router = useRouter();
 
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit'
+    }).replace(/\//g, '/');
+  };
+
   const handleDelete = async (id: string) => {
     if (confirm('Are you sure you want to delete this gallery?')) {
       try {
@@ -80,7 +89,7 @@ export function GalleryTable({ initialGalleries }: GalleryTableProps) {
             <TableCell className="font-medium">
               {gallery.title_en} / {gallery.title_ar}
             </TableCell>
-            <TableCell>{new Date(gallery.createdAt).toLocaleDateString()}</TableCell>
+            <TableCell>{formatDate(gallery.createdAt)}</TableCell>
             <TableCell>
               <div className="flex space-x-2 overflow-x-auto">
                 {gallery.images.slice(0, 3).map((image) => (

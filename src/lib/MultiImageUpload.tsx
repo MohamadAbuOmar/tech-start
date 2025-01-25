@@ -7,12 +7,13 @@ import { Loader2, Upload, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 
-interface MultiImageUploadProps {
+export interface MultiImageUploadProps {
   onUpload: (urls: string[]) => void
   defaultImages?: string[]
+  onDelete?: (index: number) => void
 }
 
-export function MultiImageUpload({ onUpload, defaultImages = [] }: MultiImageUploadProps) {
+export function MultiImageUpload({ onUpload, defaultImages = [], onDelete }: MultiImageUploadProps) {
   const [uploading, setUploading] = useState(false)
   const [previews, setPreviews] = useState<string[]>(defaultImages)
 
@@ -62,6 +63,12 @@ export function MultiImageUpload({ onUpload, defaultImages = [] }: MultiImageUpl
     } catch (error) {
       console.error('Delete error:', error)
       setPreviews(previews)
+    }
+  }
+
+  const handleDelete = (index: number) => {
+    if (onDelete) {
+      onDelete(index)
     }
   }
 
@@ -115,6 +122,7 @@ export function MultiImageUpload({ onUpload, defaultImages = [] }: MultiImageUpl
                 onClick={(e) => {
                   e.stopPropagation()
                   handleRemove(index)
+                  handleDelete(index)
                 }}
               >
                 <X className="h-4 w-4" />

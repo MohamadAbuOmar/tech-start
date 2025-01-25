@@ -1,39 +1,56 @@
-'use client'
+"use client"
 
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form"
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card"
 import { createPost } from "@/app/actions/create-post"
 import { useToast } from "@/hooks/use-toast"
-import { CreatePostInput, createPostSchema } from "@/lib/schema/schema"
 import { ImageUpload } from "@/lib/ImageUpload"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useRouter } from "next/navigation"
+import { CreatePostInput, createPostSchema, PostType } from "@/lib/schema/schema"
+import { TagSelector } from "../Gallary/TagSelector"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+
+// ...existing code...
+interface Tag {
+  id: string;
+  name_en: string;
+  name_ar: string;
+}
 
 export default function CreateBlog() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const { toast } = useToast()
-    const router = useRouter()
+  const router = useRouter()
+  const [tags, setTags] = useState<Tag[]>([])
+
+  useEffect(() => {
+    const fetchTags = async () => {
+      const response = await fetch("/api/tags")
+      const data = await response.json()
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const formattedTags = data.map((tag: any) => ({
+        id: tag.id.toString(),
+        name_en: tag.name_en,
+        name_ar: tag.name_ar
+      }))
+      setTags(formattedTags)
+    }
+    fetchTags()
+  }, [])
 
   const form = useForm<CreatePostInput>({
     resolver: zodResolver(createPostSchema),
     defaultValues: {
       slug: "",
-      type: "",
+      type: PostType.BLOG, // Set a default type
       title_en: "",
       title_ar: "",
       description_en: "",
@@ -41,7 +58,7 @@ export default function CreateBlog() {
       content_en: "",
       content_ar: "",
       imageUrl: null,
-      readTime: "",
+      readTime: "",  // Changed to empty string
       published: false,
       featured: false,
       tags: [],
@@ -67,11 +84,11 @@ export default function CreateBlog() {
           description: "Your blog post has been created successfully.",
         })
         form.reset()
-        router.push('/admin/blog')
+        router.push("/admin/blog")
       } else if (result.error) {
         toast({
           title: "Error",
-          description: typeof result.error === 'object' ? JSON.stringify(result.error) : result.error,
+          description: typeof result.error === "object" ? JSON.stringify(result.error) : result.error,
           variant: "destructive",
         })
       }
@@ -107,9 +124,7 @@ export default function CreateBlog() {
                       <FormControl>
                         <Input placeholder="Enter post slug" {...field} className="w-full" />
                       </FormControl>
-                      <FormDescription>
-                        This will be used in the URL of your post.
-                      </FormDescription>
+                      <FormDescription>This will be used in the URL of your post.</FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -120,9 +135,18 @@ export default function CreateBlog() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Type</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Enter post type" {...field} className="w-full" />
-                      </FormControl>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select post type" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value={PostType.BLOG}>Blog</SelectItem>
+                          <SelectItem value={PostType.PUBLICATION}>Publication</SelectItem>
+                          <SelectItem value={PostType.ANNOUNCEMENT}>Announcement</SelectItem>
+                        </SelectContent>
+                      </Select>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -194,7 +218,12 @@ export default function CreateBlog() {
                         <FormItem>
                           <FormLabel>Title (Arabic)</FormLabel>
                           <FormControl>
-                            <Input placeholder="Enter Arabic title" {...field} className="w-full text-right" dir="rtl" />
+                            <Input
+                              placeholder="Enter Arabic title"
+                              {...field}
+                              className="w-full text-right"
+                              dir="rtl"
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -247,10 +276,7 @@ export default function CreateBlog() {
                   <FormItem>
                     <FormLabel>Cover Image</FormLabel>
                     <FormControl>
-                      <ImageUpload
-                        onUpload={(url) => field.onChange(url)}
-                        defaultImage={field.value || undefined}
-                      />
+                      <ImageUpload onUpload={(url) => field.onChange(url)} defaultImage={field.value || undefined} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -276,16 +302,11 @@ export default function CreateBlog() {
                   render={({ field }) => (
                     <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
                       <FormControl>
-                        <Checkbox
-                          checked={field.value}
-                          onCheckedChange={field.onChange}
-                        />
+                        <Checkbox checked={field.value} onCheckedChange={field.onChange} />
                       </FormControl>
                       <div className="space-y-1 leading-none">
                         <FormLabel>Published</FormLabel>
-                        <FormDescription>
-                          This post will be visible to readers if checked.
-                        </FormDescription>
+                        <FormDescription>This post will be visible to readers if checked.</FormDescription>
                       </div>
                     </FormItem>
                   )}
@@ -296,16 +317,11 @@ export default function CreateBlog() {
                   render={({ field }) => (
                     <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
                       <FormControl>
-                        <Checkbox
-                          checked={field.value}
-                          onCheckedChange={field.onChange}
-                        />
+                        <Checkbox checked={field.value} onCheckedChange={field.onChange} />
                       </FormControl>
                       <div className="space-y-1 leading-none">
                         <FormLabel>Featured</FormLabel>
-                        <FormDescription>
-                          This post will be highlighted if checked.
-                        </FormDescription>
+                        <FormDescription>This post will be highlighted if checked.</FormDescription>
                       </div>
                     </FormItem>
                   )}
@@ -318,16 +334,14 @@ export default function CreateBlog() {
                   <FormItem>
                     <FormLabel>Tags</FormLabel>
                     <FormControl>
-                      <Input
-                        placeholder="Enter tags (comma-separated)"
-                        {...field}
-                        onChange={(e) => field.onChange(e.target.value.split(',').map(tag => tag.trim()))}
-                        className="w-full"
+                      <TagSelector
+                        tags={tags}
+                        selectedTags={field.value}
+                        onChange={field.onChange}
+                        onNewTag={(newTag) => setTags([...tags, newTag])}
                       />
                     </FormControl>
-                    <FormDescription>
-                      Enter tags separated by commas.
-                    </FormDescription>
+                    <FormDescription>Select existing tags or create new ones.</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -336,13 +350,8 @@ export default function CreateBlog() {
           </Form>
         </CardContent>
         <CardFooter>
-          <Button
-            type="submit"
-            onClick={form.handleSubmit(onSubmit)}
-            disabled={isSubmitting}
-            className="w-full"
-          >
-            {isSubmitting ? 'Creating...' : 'Create Post'}
+          <Button type="submit" onClick={form.handleSubmit(onSubmit)} disabled={isSubmitting} className="w-full">
+            {isSubmitting ? "Creating..." : "Create Post"}
           </Button>
         </CardFooter>
       </Card>

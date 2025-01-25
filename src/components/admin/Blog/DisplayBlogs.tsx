@@ -39,7 +39,11 @@ type Blog = {
   featured: boolean;
   createdAt: Date;
   updatedAt: Date;
-  tags: { id: number; name: string }[];
+  tags: { 
+    id: number; 
+    name_en: string;
+    name_ar: string;
+  }[];
 };
 
 type DisplayBlogsProps = {
@@ -104,12 +108,21 @@ export default function DisplayBlogs({ initialBlogs }: DisplayBlogsProps) {
               <TableCell className="font-medium">
                 {blog.title_en} / {blog.title_ar}
               </TableCell>
-              <TableCell>{blog.type}</TableCell>
+              <TableCell className="capitalize">{blog.type}</TableCell>
               <TableCell>{blog.published ? "Yes" : "No"}</TableCell>
               <TableCell>{blog.featured ? "Yes" : "No"}</TableCell>
               <TableCell>{formatDate(blog.createdAt)}</TableCell>
               <TableCell>
-                {blog.tags.map((tag) => tag.name).join(", ")}
+                <div className="flex flex-wrap gap-1">
+                  {blog.tags.map((tag) => (
+                    <span
+                      key={tag.id}
+                      className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary"
+                    >
+                      {tag.name_en} / {tag.name_ar}
+                    </span>
+                  ))}
+                </div>
               </TableCell>
               <TableCell className="text-right">
                 <DropdownMenu>
