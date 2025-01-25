@@ -2,7 +2,7 @@
 
 import { useState, useCallback } from "react"
 import { useDropzone } from "react-dropzone"
-import { Loader2, Upload, X, Film } from "lucide-react"
+import { Loader2, Upload, X, Film, Youtube } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -12,12 +12,6 @@ import type { VideoUpload } from "@/types/video-gallery"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Card, CardContent } from "@/components/ui/card"
 
-function getVideoId(url: string) {
-  const regExp = /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/
-  const match = url.match(regExp)
-  return match && match[2].length === 11 ? match[2] : null
-}
-
 interface MultiVideoUploadProps {
   onUpload: (videos: VideoUpload[]) => void
   defaultVideos?: VideoUpload[]
@@ -26,7 +20,7 @@ interface MultiVideoUploadProps {
 export function MultiVideoUpload({ onUpload, defaultVideos = [] }: MultiVideoUploadProps) {
   const [uploading, setUploading] = useState(false)
   const [videos, setVideos] = useState<VideoUpload[]>(defaultVideos)
-  const [youtubeUrl, setYoutubeUrl] = useState("")
+  const [youtubeLink, setYoutubeLink] = useState("")
   const { toast } = useToast()
 
   const handleInputChange = (index: number, field: "title" | "description", value: string, lang: "en" | "ar") => {
@@ -34,48 +28,6 @@ export function MultiVideoUpload({ onUpload, defaultVideos = [] }: MultiVideoUpl
     const updatedVideos = videos.map((video, i) => (i === index ? { ...video, [fieldKey]: value } : video))
     setVideos(updatedVideos)
     onUpload(updatedVideos)
-  }
-
-  const handleAddYoutubeVideo = () => {
-    if (!youtubeUrl.trim()) {
-      toast({
-        title: "Error",
-        description: "Please enter a YouTube URL",
-        variant: "destructive",
-      })
-      return
-    }
-
-    const videoId = getVideoId(youtubeUrl)
-    if (!videoId) {
-      toast({
-        title: "Error",
-        description: "Invalid YouTube URL",
-        variant: "destructive",
-      })
-      return
-    }
-
-    const embedUrl = `https://www.youtube.com/embed/${videoId}`
-
-    const newVideo: VideoUpload = {
-      url: embedUrl,
-      title_en: "",
-      title_ar: "",
-      description_en: null,
-      description_ar: null,
-      type: "youtube",
-    }
-
-    const updatedVideos = [...videos, newVideo]
-    setVideos(updatedVideos)
-    onUpload(updatedVideos)
-    setYoutubeUrl("")
-
-    toast({
-      title: "Success",
-      description: "YouTube video added successfully",
-    })
   }
 
   const onDrop = useCallback(
@@ -127,45 +79,66 @@ export function MultiVideoUpload({ onUpload, defaultVideos = [] }: MultiVideoUpl
     [videos, onUpload, toast],
   )
 
+  const handleYoutubeUpload = () => {
+    if (youtubeLink) {
+      const youtubeVideo: VideoUpload = {
+        url: youtubeLink,
+        title_en: "YouTube Video",
+        title_ar: "",
+        description_en: null,
+        description_ar: null,
+        type: "youtube",
+      }
+      const updatedVideos = [...videos, youtubeVideo]
+      setVideos(updatedVideos)
+      onUpload(updatedVideos)
+      setYoutubeLink("")
+    }
+  }
+
   const handleRemove = async (index: number) => {
     const videoToRemove = videos[index]
-    try {
-      const response = await fetch("/api/delete-video", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          url: videoToRemove.url,
-          type: videoToRemove.type,
-        }),
-      })
-
-      const data = await response.json()
-
-      if (!response.ok) {
-        throw new Error(data.error || "Failed to delete video from server")
-      }
-
-      if (data.success) {
-        const newVideos = videos.filter((_, i) => i !== index)
-        setVideos(newVideos)
-        onUpload(newVideos)
-
-        toast({
-          title: "Success",
-          description: "Video deleted successfully",
+    if (videoToRemove.type === "local") {
+      try {
+        const response = await fetch("/api/delete-video", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ url: videoToRemove.url }),
         })
-      } else {
-        throw new Error(data.error || "Failed to delete video")
+
+        const data = await response.json()
+
+        if (!response.ok) {
+          throw new Error(data.error || "Failed to delete video from server")
+        }
+
+        if (data.success) {
+          const newVideos = videos.filter((_, i) => i !== index)
+          setVideos(newVideos)
+          onUpload(newVideos)
+
+          toast({
+            title: "Success",
+            description: "Video deleted successfully",
+          })
+        } else {
+          throw new Error(data.error || "Failed to delete video")
+        }
+      } catch (error) {
+        console.error("Delete error:", error)
+        toast({
+          title: "Error",
+          description: error instanceof Error ? error.message : "Failed to delete video",
+          variant: "destructive",
+        })
       }
-    } catch (error) {
-      console.error("Delete error:", error)
-      toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : "Failed to delete video",
-        variant: "destructive",
-      })
+    } else {
+      // For YouTube videos, just remove from the list
+      const newVideos = videos.filter((_, i) => i !== index)
+      setVideos(newVideos)
+      onUpload(newVideos)
     }
   }
 
@@ -177,114 +150,139 @@ export function MultiVideoUpload({ onUpload, defaultVideos = [] }: MultiVideoUpl
     multiple: true,
   })
 
-  const renderVideo = (video: VideoUpload) => {
-    if (video.type === "youtube") {
-      return (
-        <div className="relative w-full pt-[56.25%]">
-          <iframe
-            src={video.url}
-            className="absolute top-0 left-0 w-full h-full"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowFullScreen
-          />
-        </div>
-      )
-    }
-
-    return <video src={video.url} className="w-full h-full object-cover" controls preload="metadata" playsInline />
-  }
-
   return (
     <div className="w-full space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <label htmlFor="youtube-url" className="block text-sm font-medium">
-            Add YouTube Video
-          </label>
-          <div className="flex gap-2">
+      <Tabs defaultValue="local" className="w-full">
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="local">Local Upload</TabsTrigger>
+          <TabsTrigger value="youtube">YouTube Link</TabsTrigger>
+        </TabsList>
+        <TabsContent value="local">
+          <div
+            {...getRootProps()}
+            className={cn(
+              "border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors",
+              isDragActive ? "border-primary bg-primary/10" : "border-gray-300 hover:bg-gray-50",
+            )}
+          >
+            <input {...getInputProps()} />
+            {uploading ? (
+              <div className="flex items-center justify-center">
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                <p className="ml-2 text-lg">Uploading...</p>
+              </div>
+            ) : (
+              <div className="flex flex-col items-center justify-center py-6">
+                <Upload className="h-12 w-12 text-gray-400 mb-4" />
+                <p className="text-lg text-gray-600 mb-2">Drag &apos;n&apos; drop videos here, or click to select</p>
+                <p className="text-sm text-gray-500">Supports: MP4, WebM, OGG</p>
+              </div>
+            )}
+          </div>
+        </TabsContent>
+        <TabsContent value="youtube">
+          <div className="flex items-center space-x-2">
             <Input
-              id="youtube-url"
-              value={youtubeUrl}
-              onChange={(e) => setYoutubeUrl(e.target.value)}
-              placeholder="Paste YouTube video URL here"
-              className="flex-grow"
+              type="text"
+              placeholder="Enter YouTube video URL"
+              value={youtubeLink}
+              onChange={(e) => setYoutubeLink(e.target.value)}
             />
-            <Button onClick={handleAddYoutubeVideo} type="button">
-              Add
+            <Button onClick={handleYoutubeUpload} disabled={!youtubeLink}>
+              <Youtube className="h-4 w-4 mr-2" />
+              Add YouTube Video
             </Button>
           </div>
-        </div>
-
-        <div
-          {...getRootProps()}
-          className={cn(
-            "border-2 border-dashed rounded-lg p-4 text-center cursor-pointer transition-colors",
-            isDragActive ? "border-primary bg-primary/10" : "border-gray-300 hover:bg-gray-50",
-          )}
-        >
-          <input {...getInputProps()} />
-          {uploading ? (
-            <div className="flex items-center justify-center">
-              <Loader2 className="h-6 w-6 animate-spin text-primary" />
-              <p className="ml-2">Uploading...</p>
-            </div>
-          ) : (
-            <div>
-              <Upload className="h-6 w-6 text-gray-400 mx-auto mb-2" />
-              <p className="text-sm text-gray-600">Drag & drop videos or click to select</p>
-            </div>
-          )}
-        </div>
-      </div>
-
+        </TabsContent>
+      </Tabs>
       {videos.length > 0 && (
-        <div className="space-y-4">
+        <div className="space-y-6">
           {videos.map((video, index) => (
-            <Card key={index} className="overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300">
-              <CardContent className="p-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="relative rounded-lg overflow-hidden bg-black">
-                    {renderVideo(video)}
-                    <div className="absolute top-2 left-2 bg-black bg-opacity-50 text-white px-2 py-1 rounded-full text-xs">
-                      <Film className="h-3 w-3 inline-block mr-1" />
-                      {video.type === "youtube" ? "YouTube" : "Local"} Video {index + 1}
+            <Card key={index} className="overflow-hidden">
+              <CardContent className="p-0">
+                <div className="grid grid-cols-1 md:grid-cols-2">
+                  <div className="relative aspect-video min-h-[300px]">
+                    {video.type === "local" ? (
+                      <video
+                        src={video.url}
+                        className="w-full h-full object-contain bg-black cursor-pointer"
+                        controls
+                        playsInline
+                        preload="metadata"
+                        controlsList="nodownload"
+                        onClick={(e) => {
+                          const videoElement = e.target as HTMLVideoElement
+                          if (videoElement.paused) {
+                            videoElement.play()
+                          } else {
+                            videoElement.pause()
+                          }
+                        }}
+                      />
+                    ) : (
+                      <iframe
+                        src={`https://www.youtube.com/embed/${getYoutubeVideoId(video.url)}`}
+                        className="w-full h-full absolute inset-0"
+                        allowFullScreen
+                        title={`YouTube video ${index + 1}`}
+                      />
+                    )}
+                    <div className="absolute top-2 left-2 bg-black bg-opacity-50 text-white px-2 py-1 rounded z-10">
+                      {video.type === "local" ? (
+                        <Film className="h-4 w-4 inline-block mr-1" />
+                      ) : (
+                        <Youtube className="h-4 w-4 inline-block mr-1" />
+                      )}
+                      Video {index + 1}
                     </div>
                   </div>
-                  <div className="space-y-4">
+                  <div className="p-6 space-y-4">
                     <Tabs defaultValue="english" className="w-full">
                       <TabsList className="grid w-full grid-cols-2">
                         <TabsTrigger value="english">English</TabsTrigger>
                         <TabsTrigger value="arabic">Arabic</TabsTrigger>
                       </TabsList>
-                      <TabsContent value="english" className="space-y-2">
-                        <Input
-                          value={video.title_en}
-                          onChange={(e) => handleInputChange(index, "title", e.target.value, "en")}
-                          placeholder="Enter video title in English"
-                        />
-                        <Textarea
-                          value={video.description_en || ""}
-                          onChange={(e) => handleInputChange(index, "description", e.target.value, "en")}
-                          placeholder="Enter video description in English"
-                          rows={3}
-                        />
+                      <TabsContent value="english" className="space-y-4">
+                        <div>
+                          <label className="text-sm font-medium block mb-1">Title (English)</label>
+                          <Input
+                            value={video.title_en}
+                            onChange={(e) => handleInputChange(index, "title", e.target.value, "en")}
+                            placeholder="Enter video title in English"
+                          />
+                        </div>
+                        <div>
+                          <label className="text-sm font-medium block mb-1">Description (English)</label>
+                          <Textarea
+                            value={video.description_en || ""}
+                            onChange={(e) => handleInputChange(index, "description", e.target.value, "en")}
+                            placeholder="Enter video description in English"
+                            rows={3}
+                          />
+                        </div>
                       </TabsContent>
-                      <TabsContent value="arabic" className="space-y-2">
-                        <Input
-                          value={video.title_ar}
-                          onChange={(e) => handleInputChange(index, "title", e.target.value, "ar")}
-                          placeholder="Enter video title in Arabic"
-                          className="text-right"
-                          dir="rtl"
-                        />
-                        <Textarea
-                          value={video.description_ar || ""}
-                          onChange={(e) => handleInputChange(index, "description", e.target.value, "ar")}
-                          placeholder="Enter video description in Arabic"
-                          className="text-right"
-                          dir="rtl"
-                          rows={3}
-                        />
+                      <TabsContent value="arabic" className="space-y-4">
+                        <div>
+                          <label className="text-sm font-medium block mb-1">Title (Arabic)</label>
+                          <Input
+                            value={video.title_ar}
+                            onChange={(e) => handleInputChange(index, "title", e.target.value, "ar")}
+                            placeholder="Enter video title in Arabic"
+                            className="text-right"
+                            dir="rtl"
+                          />
+                        </div>
+                        <div>
+                          <label className="text-sm font-medium block mb-1">Description (Arabic)</label>
+                          <Textarea
+                            value={video.description_ar || ""}
+                            onChange={(e) => handleInputChange(index, "description", e.target.value, "ar")}
+                            placeholder="Enter video description in Arabic"
+                            className="text-right"
+                            dir="rtl"
+                            rows={3}
+                          />
+                        </div>
                       </TabsContent>
                     </Tabs>
                     <div className="flex justify-end">
@@ -302,5 +300,11 @@ export function MultiVideoUpload({ onUpload, defaultVideos = [] }: MultiVideoUpl
       )}
     </div>
   )
+}
+
+function getYoutubeVideoId(url: string) {
+  const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/
+  const match = url.match(regExp)
+  return match && match[2].length === 11 ? match[2] : null
 }
 

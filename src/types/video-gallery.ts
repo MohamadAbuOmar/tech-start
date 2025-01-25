@@ -28,6 +28,7 @@ export interface VideoUpload {
   title_ar: string;
   description_en: string | null;
   description_ar: string | null;
+  type: 'youtube' | 'local';  // Add this line
 }
 
 export interface VideoFormData {
