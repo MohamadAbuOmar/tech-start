@@ -1,8 +1,8 @@
 "use client"
 
-import { useState, useCallback } from "react"
+import { useState, useCallback, useEffect } from "react"
 import { useDropzone } from "react-dropzone"
-import { Loader2, Upload, X, Film, Youtube } from "lucide-react"
+import { Loader2, Upload, X, Film, Youtube, Play, Pause } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -22,6 +22,11 @@ export function MultiVideoUpload({ onUpload, defaultVideos = [] }: MultiVideoUpl
   const [videos, setVideos] = useState<VideoUpload[]>(defaultVideos)
   const [youtubeLink, setYoutubeLink] = useState("")
   const { toast } = useToast()
+  const [playingStates, setPlayingStates] = useState<boolean[]>(new Array(videos.length).fill(false))
+
+  useEffect(() => {
+    setPlayingStates(new Array(videos.length).fill(false))
+  }, [videos])
 
   const handleInputChange = (index: number, field: "title" | "description", value: string, lang: "en" | "ar") => {
     const fieldKey = `${field}_${lang}` as keyof VideoUpload
@@ -103,6 +108,7 @@ export function MultiVideoUpload({ onUpload, defaultVideos = [] }: MultiVideoUpl
         const response = await fetch("/api/delete-video", {
           method: "POST",
           headers: {
+            "Content-Security-Policy": "default-src 'self'; connect-src 'self' https:;",
             "Content-Type": "application/json",
           },
           body: JSON.stringify({ url: videoToRemove.url }),
@@ -149,6 +155,34 @@ export function MultiVideoUpload({ onUpload, defaultVideos = [] }: MultiVideoUpl
     },
     multiple: true,
   })
+
+  const handleVideoClick = (index: number) => {
+    const videoElement = document.getElementById(`video-${index}`) as HTMLVideoElement
+    if (videoElement) {
+      if (videoElement.paused) {
+        videoElement
+          .play()
+          .then(() => {
+            const newPlayingStates = [...playingStates]
+            newPlayingStates[index] = true
+            setPlayingStates(newPlayingStates)
+          })
+          .catch((error) => {
+            console.error("Error playing video:", error)
+            toast({
+              title: "Error",
+              description: "Failed to play video. Please try again.",
+              variant: "destructive",
+            })
+          })
+      } else {
+        videoElement.pause()
+        const newPlayingStates = [...playingStates]
+        newPlayingStates[index] = false
+        setPlayingStates(newPlayingStates)
+      }
+    }
+  }
 
   return (
     <div className="w-full space-y-6">
@@ -203,29 +237,39 @@ export function MultiVideoUpload({ onUpload, defaultVideos = [] }: MultiVideoUpl
                 <div className="grid grid-cols-1 md:grid-cols-2">
                   <div className="relative aspect-video min-h-[300px]">
                     {video.type === "local" ? (
-                      <video
-                        src={video.url}
-                        className="w-full h-full object-contain bg-black cursor-pointer"
-                        controls
-                        playsInline
-                        preload="metadata"
-                        controlsList="nodownload"
-                        onClick={(e) => {
-                          const videoElement = e.target as HTMLVideoElement
-                          if (videoElement.paused) {
-                            videoElement.play()
-                          } else {
-                            videoElement.pause()
-                          }
-                        }}
-                      />
+                      <>
+                        <video
+                          id={`video-${index}`}
+                          src={video.url}
+                          className="w-full h-full object-contain bg-black"
+                          playsInline
+                          preload="metadata"
+                          controlsList="nodownload"
+                        />
+                        <Button
+                          className="absolute bottom-2 right-2 z-10"
+                          size="sm"
+                          onClick={() => handleVideoClick(index)}
+                        >
+                          {playingStates[index] ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
+                        </Button>
+                      </>
                     ) : (
-                      <iframe
-                        src={`https://www.youtube.com/embed/${getYoutubeVideoId(video.url)}`}
-                        className="w-full h-full absolute inset-0"
-                        allowFullScreen
-                        title={`YouTube video ${index + 1}`}
-                      />
+                      <>
+                        <iframe
+                          src={`https://www.youtube.com/embed/${getYoutubeVideoId(video.url)}`}
+                          className="w-full h-full absolute inset-0"
+                          allowFullScreen
+                          title={`YouTube video ${index + 1}`}
+                        />
+                        <Button
+                          className="absolute bottom-2 right-2 z-10"
+                          size="sm"
+                          onClick={() => window.open(video.url, "_blank")}
+                        >
+                          <Play className="h-4 w-4" />
+                        </Button>
+                      </>
                     )}
                     <div className="absolute top-2 left-2 bg-black bg-opacity-50 text-white px-2 py-1 rounded z-10">
                       {video.type === "local" ? (

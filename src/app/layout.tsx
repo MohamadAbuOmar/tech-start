@@ -9,7 +9,7 @@ const montserrat = Montserrat({
 });
 
 export const metadata: Metadata = {
-  title: "Tech Start - Test",
+  title: "Tech Start",
   description: "Tech Start is a tech company that provides advanced training programs.",
 };
 
