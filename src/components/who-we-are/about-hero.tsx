@@ -4,15 +4,17 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import { useLanguage } from "@/context/LanguageContext";
 import { LocalizedAboutUs } from "@/app/actions/pages/about-us";
+import React from "react";
+import dynamic from "next/dynamic";
 
 interface AboutHeroProps {
   aboutData: LocalizedAboutUs;
 }
 
 export default function AboutHero({ aboutData }: AboutHeroProps) {
-  const { language } = useLanguage();
+  const { language, isRTL } = useLanguage();
   return (
-    <div className="relative overflow-hidden bg-gradient-to-br from-pink-50 to-white">
+    <div className={`relative overflow-hidden bg-gradient-to-br from-pink-50 to-white ${isRTL ? 'rtl' : 'ltr'}`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div>
           <div className="grid lg:grid-cols-2 gap-12 items-center">
@@ -73,7 +75,7 @@ export default function AboutHero({ aboutData }: AboutHeroProps) {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.2 }}
-              className="relative lg:h-[600px]"
+              className={`relative lg:h-[600px] ${isRTL ? 'transform scale-x-[-1]' : ''}`}
             >
               <Image
                 src={aboutData.imageUrl || "/images/About.png"}
@@ -94,15 +96,18 @@ export default function AboutHero({ aboutData }: AboutHeroProps) {
           className="grid md:grid-cols-3 gap-8 pb-20"
         >
           {aboutData.cards.map((card) => (
-            <div key={card.id} className="bg-white rounded-2xl p-8 shadow-lg shadow-blue-100">
+            <div key={card.id} className={`bg-white rounded-2xl p-8 shadow-lg shadow-blue-100 ${isRTL ? 'text-right' : 'text-left'}`}>
               <div className="size-12 rounded-lg bg-blue-100 flex items-center justify-center mb-6">
-                <svg
-                  className="size-6 text-blue-600"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  dangerouslySetInnerHTML={{ __html: card.icon }}
-                />
+                <div className="size-6 text-blue-600">
+                  {React.createElement(
+                    dynamic(() =>
+                      import('lucide-react').then(
+                        (mod) => mod[card.icon as keyof typeof mod] || mod.HelpCircle
+                      )
+                    ),
+                    { size: 24 }
+                  )}
+                </div>
               </div>
               <h3 className="text-xl font-semibold mb-2">{card.title}</h3>
               <p className="text-gray-600">{card.description}</p>

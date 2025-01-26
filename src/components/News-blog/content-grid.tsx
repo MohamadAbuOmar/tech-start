@@ -4,6 +4,7 @@ import { useState } from "react";
 import { ContentCard, type ContentCardProps } from "./content-card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { useLanguage } from "@/context/LanguageContext";
 
 interface ContentGridProps {
   title: string;
@@ -12,6 +13,7 @@ interface ContentGridProps {
 }
 
 export function ContentGrid({ title, subtitle, items }: ContentGridProps) {
+  const { language, isRTL } = useLanguage();
   const [search, setSearch] = useState("");
   const [selectedType, setSelectedType] = useState<string>("all");
 
@@ -30,7 +32,7 @@ export function ContentGrid({ title, subtitle, items }: ContentGridProps) {
 
   return (
     <section className="py-16 px-5 bg-gradient-to-b from-background to-secondary/10 min-h-screen">
-      <div className="container max-w-7xl mx-auto">
+      <div className={`container max-w-7xl mx-auto ${isRTL ? 'rtl' : 'ltr'}`}>
         <div className="text-center mb-16">
           <h1 className="text-5xl font-extrabold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">
             {title}
@@ -43,7 +45,7 @@ export function ContentGrid({ title, subtitle, items }: ContentGridProps) {
 
           <div className="flex flex-col gap-6 max-w-xl mx-auto">
             <Input
-              placeholder="Search by title, description, or tags..."
+              placeholder={language === 'en' ? "Search by title, description, or tags..." : "البحث بالعنوان، الوصف، أو الكلمات المفتاحية..."}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="w-full text-center"
@@ -66,7 +68,7 @@ export function ContentGrid({ title, subtitle, items }: ContentGridProps) {
 
         {filteredItems.length === 0 ? (
           <p className="text-center text-muted-foreground text-lg">
-            No items found matching your criteria.
+            {language === 'en' ? "No items found matching your criteria." : "لم يتم العثور على عناصر تطابق معايير البحث."}
           </p>
         ) : (
           <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3 max-w-7xl mx-auto">

@@ -25,7 +25,12 @@ export const getMediaItems = cache(async (language: 'en' | 'ar' = 'en'): Promise
         orderBy: { createdAt: 'desc' }
       }),
       db.gallery.findFirst({
-        include: { images: { take: 1 } },
+        include: { 
+          images: { 
+            where: { featured: true },
+            take: 1 
+          }
+        },
         orderBy: { createdAt: 'desc' }
       }),
       db.video.findFirst({
@@ -58,13 +63,16 @@ export const getMediaItems = cache(async (language: 'en' | 'ar' = 'en'): Promise
     }
 
     if (latestGallery) {
-      mediaItems.push({
-        id: latestGallery.id,
-        title: language === 'en' ? latestGallery.title_en : latestGallery.title_ar,
-        imageUrl: latestGallery.images[0]?.url || '/assets/img28.jpg',
-        type: 'gallery',
-        link: '/gallery'
-      });
+      // Only add gallery if it has a featured image
+      if (latestGallery && latestGallery.images.length > 0) {
+        mediaItems.push({
+          id: latestGallery.id,
+          title: language === 'en' ? latestGallery.title_en : latestGallery.title_ar,
+          imageUrl: latestGallery.images[0].url,
+          type: 'gallery',
+          link: '/gallery'
+        });
+      }
     }
 
     if (latestVideo) {

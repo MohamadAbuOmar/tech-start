@@ -4,14 +4,19 @@ import React, { useEffect, useId, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useOutsideClick } from "@/lib/use-outside-click";
 import { Input } from "@/components/ui/input";
-import { Card } from "@/types/card";
-import { cards } from "./cards";
 import { CategoryTabs } from "./category-tabs";
+import { useLanguage } from "@/context/LanguageContext";
+import { LocalizedBeneficiary } from "@/app/actions/pages/beneficiaries";
 
 const DEFAULT_IMAGE = "/car-front-2.png"; 
 
-export function BeneficiariesSection() {
-  const [active, setActive] = useState<Card | null>(null);
+interface BeneficiariesSectionProps {
+  data: LocalizedBeneficiary[];
+}
+
+export function BeneficiariesSection({ data }: BeneficiariesSectionProps) {
+  const { language, isRTL } = useLanguage();
+  const [active, setActive] = useState<LocalizedBeneficiary | null>(null);
   const [search, setSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState<string>("all");
   const id = useId();
@@ -22,12 +27,12 @@ export function BeneficiariesSection() {
     return url;
   };
 
-  const categories = ["all", "education", "healthcare", "training", "welfare"];
+  const categories = ["all", ...new Set(data.map(item => item.category.slug))];
 
-  const filteredCards = cards.filter((card) => {
+  const filteredCards = data.filter((card) => {
     const matchesSearch = card.title.toLowerCase().includes(search.toLowerCase()) ||
                          card.description.toLowerCase().includes(search.toLowerCase());
-    const matchesCategory = categoryFilter === "all" || card.category === categoryFilter;
+    const matchesCategory = categoryFilter === "all" || card.category.slug === categoryFilter;
     return matchesSearch && matchesCategory;
   });
 
@@ -51,7 +56,7 @@ export function BeneficiariesSection() {
   useOutsideClick(ref, () => setActive(null));
 
   return (
-    <div className="w-full bg-white py-16">
+    <div className={`w-full bg-white py-16 ${isRTL ? 'rtl' : 'ltr'}`}>
       <div className="max-w-screen-xl mx-auto px-4">
         <motion.h2 
           initial={{ opacity: 0, y: -20 }}
@@ -59,12 +64,12 @@ export function BeneficiariesSection() {
           transition={{ duration: 0.6, ease: "easeOut" }}
           className="text-4xl font-bold text-center mb-16 text-black"
         >
-          Empowering Lives, Creating Opportunities
+          {language === 'en' ? 'Empowering Lives, Creating Opportunities' : 'تمكين الحياة، خلق الفرص'}
         </motion.h2>
 
         <div className="mb-8 flex flex-col md:flex-row gap-4">
           <Input
-            placeholder="Search beneficiaries..."
+            placeholder={language === 'en' ? "Search beneficiaries..." : "البحث عن المستفيدين..."}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="md:w-72"
@@ -110,7 +115,7 @@ export function BeneficiariesSection() {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  className="absolute top-4 right-4 z-20 bg-gray-100 rounded-full p-2 hover:bg-gray-200 transition-all"
+                  className={`absolute top-4 ${isRTL ? 'left-4' : 'right-4'} z-20 bg-gray-100 rounded-full p-2 hover:bg-gray-200 transition-all`}
                   onClick={() => setActive(null)}
                 >
                   <CloseIcon />
@@ -135,13 +140,13 @@ export function BeneficiariesSection() {
                 <div className="p-6 pt-4">
                   <motion.h3
                     layoutId={`title-${active.title}-${id}`}
-                    className="text-2xl font-bold text-black mb-2"
+                    className={`text-2xl font-bold text-black mb-2 ${isRTL ? 'text-right' : 'text-left'}`}
                   >
                     {active.title}
                   </motion.h3>
                   <motion.p
                     layoutId={`description-${active.description}-${id}`}
-                    className="text-gray-700 mb-4"
+                    className={`text-gray-700 mb-4 ${isRTL ? 'text-right' : 'text-left'}`}
                   >
                     {active.description}
                   </motion.p>
@@ -151,7 +156,7 @@ export function BeneficiariesSection() {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    className="text-gray-800 text-base leading-relaxed max-h-64 overflow-auto pr-2"
+                    className={`text-gray-800 text-base leading-relaxed max-h-64 overflow-auto ${isRTL ? 'pl-2' : 'pr-2'} ${isRTL ? 'text-right' : 'text-left'}`}
                   >
                     {active.longDescription}
                   </motion.div>
@@ -163,7 +168,7 @@ export function BeneficiariesSection() {
                     exit={{ opacity: 0, y: 20 }}
                     href={active.ctaLink}
                     target="_blank"
-                    className="mt-4 block w-full text-center px-6 py-3 bg-black text-white rounded-full font-bold hover:bg-gray-800 transition-all"
+                    className={`mt-4 block w-full text-center px-6 py-3 bg-black text-white rounded-full font-bold hover:bg-gray-800 transition-all ${isRTL ? 'font-[Noto Sans Arabic]' : ''}`}
                   >
                     {active.ctaText}
                   </motion.a>
@@ -228,13 +233,13 @@ export function BeneficiariesSection() {
                 <div className="text-center">
                   <motion.h3
                     layoutId={`title-${card.title}-${id}`}
-                    className="font-bold text-lg text-black mb-1"
+                    className={`font-bold text-lg text-black mb-1 ${isRTL ? 'text-right' : 'text-left'}`}
                   >
                     {card.title}
                   </motion.h3>
                   <motion.p
                     layoutId={`description-${card.description}-${id}`}
-                    className="text-gray-700 text-sm"
+                    className={`text-gray-700 text-sm ${isRTL ? 'text-right' : 'text-left'}`}
                   >
                     {card.description}
                   </motion.p>

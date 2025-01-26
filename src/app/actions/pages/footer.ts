@@ -12,12 +12,11 @@ export interface LocalizedFooter {
   trust: string;
   copyright: string;
   socialLinks: {
-    instagram?: string;
-    linkedin?: string;
-    github?: string;
-    youtube?: string;
-    facebook?: string;
-    twitter?: string;
+    instagram: string | null;
+    linkedin: string | null;
+    youtube: string | null;
+    facebook: string | null;
+    twitter: string | null;
   };
 }
 
@@ -35,17 +34,17 @@ export const getFooter = cache(async (language: 'en' | 'ar' = 'en'): Promise<Api
       trust: language === 'en' ? 'Trust' : 'الثقة',
       copyright: language === 'en' ? '© Tech Start. All rights reserved.' : '© تك ستارت. جميع الحقوق محفوظة.',
       socialLinks: footer ? {
-        instagram: footer.instagram,
-        linkedin: footer.linkedin,
-        youtube: footer.youtube,
-        facebook: footer.facebook,
-        twitter: footer.twitter
+        instagram: footer.instagram || null,
+        linkedin: footer.linkedin || null,
+        youtube: footer.youtube || null,
+        facebook: footer.facebook || null,
+        twitter: footer.twitter || null
       } : {
-        instagram: '#',
-        linkedin: '#',
-        youtube: '#',
-        facebook: '#',
-        twitter: '#'
+        instagram: null,
+        linkedin: null,
+        youtube: null,
+        facebook: null,
+        twitter: null
       }
     };
 

@@ -6,15 +6,15 @@ import { Building, Briefcase, Building2, DollarSign } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
 import { LocalizedStat } from "@/app/actions/pages/stats";
 
-const getIconByType = (type: string) => {
-  switch (type) {
-    case 'firms':
+const getIconByName = (iconName: string) => {
+  switch (iconName) {
+    case 'building':
       return Building;
-    case 'jobs':
+    case 'briefcase':
       return Briefcase;
-    case 'new_firms':
+    case 'building2':
       return Building2;
-    case 'grants':
+    case 'dollar':
       return DollarSign;
     default:
       return Building;
@@ -27,6 +27,7 @@ interface StatsCountUpProps {
 
 export default function StatsCountUp({ stats }: StatsCountUpProps) {
   const { language, isRTL } = useLanguage();
+  if (!stats?.length) return null;
   return (
     <section className="bg-gradient-to-b from-white to-gray-50 py-24 sm:py-32">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
@@ -48,7 +49,7 @@ export default function StatsCountUp({ stats }: StatsCountUpProps) {
                 key={stat.id} 
                 name={stat.name}
                 value={stat.value}
-                icon={getIconByType(stat.type)}
+                icon={getIconByName(stat.icon)}
               />
             ))}
           </dl>
@@ -67,6 +68,7 @@ function Stat({
   value: number;
   icon: React.ElementType;
 }) {
+  const { language, isRTL } = useLanguage();
   const { count, ref, controls } = useCountUp(value);
 
   return (

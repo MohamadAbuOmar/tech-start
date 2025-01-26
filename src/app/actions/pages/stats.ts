@@ -8,7 +8,8 @@ export interface LocalizedStat {
   id: string;
   name: string;
   value: number;
-  icon: string;
+  type: string;
+  icon: string; // 'building' | 'briefcase' | 'building2' | 'dollar'
 }
 
 export const getStats = cache(async (language: 'en' | 'ar' = 'en'): Promise<ApiResponse<LocalizedStat[]>> => {
@@ -27,6 +28,7 @@ export const getStats = cache(async (language: 'en' | 'ar' = 'en'): Promise<ApiR
       id: stat.id,
       name: language === 'en' ? stat.name_en : stat.name_ar,
       value: stat.value,
+      type: stat.icon, // Using icon field as type since it stores the type identifier
       icon: stat.icon
     }));
 

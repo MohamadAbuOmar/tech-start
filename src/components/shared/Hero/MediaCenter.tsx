@@ -75,6 +75,10 @@ export function MediaCenter({ items }: MediaCenterProps) {
                     className={`w-full h-full object-cover transition-transform duration-300 group-hover:scale-105 ${isRTL ? 'transform scale-x-[-1]' : ''}`}
                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     priority={i === 0}
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      target.src = '/assets/placeholder.jpg';
+                    }}
                   />
                 </div>
               }

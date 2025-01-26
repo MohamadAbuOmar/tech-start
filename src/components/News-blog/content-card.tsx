@@ -8,16 +8,12 @@ import {
 import { Calendar, Clock } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { useLanguage } from "@/context/LanguageContext";
 
-export interface ContentCardProps {
-  type: "blog" | "publication" | "announcement";
-  title: string;
-  description?: string;
-  date: string;
-  readTime?: string;
-  tags?: string[];
-  imageUrl: string;
-  slug: string;
+import { LocalizedPost } from "@/app/actions/pages/posts";
+
+export interface ContentCardProps extends Omit<LocalizedPost, 'content' | 'published' | 'featured' | 'id' | 'updatedAt'> {
+  date: string; // formatted date string
 }
 
 export function ContentCard({
@@ -30,8 +26,9 @@ export function ContentCard({
   imageUrl,
   slug,
 }: ContentCardProps) {
+  const { language, isRTL } = useLanguage();
   return (
-    <Card className="overflow-hidden group hover:shadow-lg transition-shadow duration-300 flex flex-col h-full">
+    <Card className={`overflow-hidden group hover:shadow-lg transition-shadow duration-300 flex flex-col h-full ${isRTL ? 'rtl' : 'ltr'}`}>
       <Link href={`/${type}/${slug}`} className="flex flex-col h-full">
         <CardHeader className="p-0">
           <div className="aspect-[16/9] relative overflow-hidden">
@@ -45,29 +42,29 @@ export function ContentCard({
           </div>
         </CardHeader>
         <CardContent className="p-6 flex-grow">
-          <div className="flex items-center gap-4 text-sm text-muted-foreground mb-4">
-            <div className="flex items-center gap-1.5">
+          <div className={`flex items-center gap-4 text-sm text-muted-foreground mb-4 ${isRTL ? 'flex-row-reverse' : ''}`}>
+            <div className={`flex items-center gap-1.5 ${isRTL ? 'flex-row-reverse' : ''}`}>
               <Calendar className="w-4 h-4" />
               <time dateTime={date}>{date}</time>
             </div>
             {readTime && (
-              <div className="flex items-center gap-1.5">
+              <div className={`flex items-center gap-1.5 ${isRTL ? 'flex-row-reverse' : ''}`}>
                 <Clock className="w-4 h-4" />
-                <span>{readTime} read</span>
+                <span>{readTime} {language === 'en' ? 'read' : 'للقراءة'}</span>
               </div>
             )}
           </div>
-          <h2 className="text-2xl font-bold mb-3 line-clamp-2 group-hover:text-primary transition-colors duration-300">
+          <h2 className={`text-2xl font-bold mb-3 line-clamp-2 group-hover:text-primary transition-colors duration-300 ${isRTL ? 'text-right' : 'text-left'}`}>
             {title}
           </h2>
           {description && (
-            <p className="text-muted-foreground line-clamp-3 mb-4">
+            <p className={`text-muted-foreground line-clamp-3 mb-4 ${isRTL ? 'text-right' : 'text-left'}`}>
               {description}
             </p>
           )}
         </CardContent>
         <CardFooter className="px-6 pb-6 mt-auto">
-          <div className="flex flex-wrap gap-2">
+          <div className={`flex flex-wrap gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
             {tags?.map((tag) => (
               <Badge
                 key={tag}

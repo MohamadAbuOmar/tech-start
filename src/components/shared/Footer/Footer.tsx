@@ -145,11 +145,10 @@ export default function Footer({ footer }: FooterProps) {
               {[
                 { Icon: Instagram, href: footer.socialLinks.instagram },
                 { Icon: Linkedin, href: footer.socialLinks.linkedin },
-                { Icon: Github, href: footer.socialLinks.github },
                 { Icon: Youtube, href: footer.socialLinks.youtube },
                 { Icon: Facebook, href: footer.socialLinks.facebook },
                 { Icon: Twitter, href: footer.socialLinks.twitter }
-              ].filter(item => item.href).map(
+              ].filter(item => item.href !== null).map(
                 ({ Icon, href }, i) => (
                   <Link
                     key={i}
