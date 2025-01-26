@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import { X, ChevronRight, Home, Book, Users, Newspaper, Shield, HelpCircle, Phone } from 'lucide-react';
+import { useLanguage } from '@/context/LanguageContext';
 import { LogoAnimation } from '../../Hero/LogoAnimation';
 
 interface MobileMenuProps {
@@ -11,31 +12,33 @@ interface MobileMenuProps {
   onClose: () => void;
 }
 
-const menuItems = [
-  { id: 'home', name: 'Home', icon: Home, href: '/' },
-  { id: 'programs', name: 'Programs', icon: Book, subItems: [
-    { id: 'program1', name: 'Program 1', href: '/programs/1' },
-    { id: 'program2', name: 'Program 2', href: '/programs/2' },
-    { id: 'program3', name: 'Program 3', href: '/programs/3' },
+const getMenuItems = (language: 'en' | 'ar') => [
+  { id: 'home', name: language === 'en' ? 'Home' : 'الرئيسية', icon: Home, href: '/' },
+  { id: 'programs', name: language === 'en' ? 'Programs' : 'البرامج', icon: Book, subItems: [
+    { id: 'program1', name: language === 'en' ? 'Program 1' : 'البرنامج 1', href: '/programs/1' },
+    { id: 'program2', name: language === 'en' ? 'Program 2' : 'البرنامج 2', href: '/programs/2' },
+    { id: 'program3', name: language === 'en' ? 'Program 3' : 'البرنامج 3', href: '/programs/3' },
   ]},
-  { id: 'about', name: 'About Us', icon: Users, subItems: [
-    { id: 'who-we-are', name: 'Who We Are', href: '/About-us?tab=who-we-are' },
-    { id: 'our-team', name: 'Our Team', href: '/About-us?tab=our-team' },
-    { id: 'work-with-us', name: 'Work with us', href: '/About-us?tab=work-with-us' },
-    { id: 'partners', name: 'Our Partners', href: '/partners' },
-    { id: 'beneficiaries', name: 'Our Beneficiaries', href: '/beneficiaries' },
+  { id: 'about', name: language === 'en' ? 'About Us' : 'من نحن', icon: Users, subItems: [
+    { id: 'who-we-are', name: language === 'en' ? 'Who We Are' : 'من نحن', href: '/About-us?tab=who-we-are' },
+    { id: 'our-team', name: language === 'en' ? 'Our Team' : 'فريقنا', href: '/About-us?tab=our-team' },
+    { id: 'work-with-us', name: language === 'en' ? 'Work with us' : 'اعمل معنا', href: '/About-us?tab=work-with-us' },
+    { id: 'partners', name: language === 'en' ? 'Our Partners' : 'شركاؤنا', href: '/partners' },
+    { id: 'beneficiaries', name: language === 'en' ? 'Our Beneficiaries' : 'المستفيدون', href: '/beneficiaries' },
   ]},
-  { id: 'media', name: 'Media Center', icon: Newspaper, href: '/media-center' },
-  { id: 'safeguards', name: 'Safeguards', icon: Shield, href: '/Safeguards' },
-  { id: 'faqs', name: 'FAQs', icon: HelpCircle, href: '/FAQs' },
-  { id: 'contact', name: 'Contact Us', icon: Phone, subItems: [
-    { id: 'complaints', name: 'Complaints', href: '/submit-complaint' },
-    { id: 'contact-faqs', name: 'FAQs', href: '/FAQs' },
+  { id: 'media', name: language === 'en' ? 'Media Center' : 'المركز الإعلامي', icon: Newspaper, href: '/media-center' },
+  { id: 'safeguards', name: language === 'en' ? 'Safeguards' : 'الضمانات', icon: Shield, href: '/Safeguards' },
+  { id: 'faqs', name: language === 'en' ? 'FAQs' : 'الأسئلة الشائعة', icon: HelpCircle, href: '/FAQs' },
+  { id: 'contact', name: language === 'en' ? 'Contact Us' : 'اتصل بنا', icon: Phone, subItems: [
+    { id: 'complaints', name: language === 'en' ? 'Complaints' : 'الشكاوى', href: '/submit-complaint' },
+    { id: 'contact-faqs', name: language === 'en' ? 'FAQs' : 'الأسئلة الشائعة', href: '/FAQs' },
   ]},
 ];
 
 const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
+  const { language } = useLanguage();
   const [expandedItems, setExpandedItems] = useState<string[]>([]);
+  const menuItems = getMenuItems(language);
 
   useEffect(() => {
     if (isOpen) {
@@ -62,7 +65,7 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.3 }}
-          className="fixed inset-0 bg-white z-[1000] overflow-hidden"
+          className={`fixed inset-0 bg-white z-[1000] overflow-hidden ${language === 'ar' ? 'rtl' : 'ltr'}`}
         >
           <div className="flex flex-col h-full">
             <div className="flex justify-between items-center p-4 border-b border-gray-200">

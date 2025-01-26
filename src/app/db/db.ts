@@ -1,7 +1,19 @@
 import { PrismaClient } from "@prisma/client"
 
 const prismaClientSingleton = () => {
-  return new PrismaClient()
+  return new PrismaClient({
+    datasources: {
+      db: {
+        url: process.env.DATABASE_URL
+      }
+    },
+    log: ['error', 'warn'],
+    // Add connection pooling configuration
+    connection: {
+      keepAlive: true,
+      keepAliveInitialDelay: 10000
+    }
+  })
 }
 
 declare global {
@@ -11,6 +23,6 @@ declare global {
 
 const db = globalThis.prisma ?? prismaClientSingleton()
 
-export default db
-
 if (process.env.NODE_ENV !== "production") globalThis.prisma = db
+
+export default db

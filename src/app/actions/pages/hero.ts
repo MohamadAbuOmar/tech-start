@@ -1,5 +1,6 @@
 'use server'
 
+// Set runtime to nodejs to avoid edge runtime issues
 import db from '@/app/db/db'
 import { revalidatePath } from 'next/cache'
 import { cache } from 'react'
@@ -78,15 +79,39 @@ export async function deleteHeroStep(id: number): Promise<ApiResponse<void>> {
   }
 }
 
-export const getHeroSteps = cache(async (): Promise<ApiResponse<HeroStep[]>> => {
+export interface LocalizedHeroStep {
+  id: number;
+  title: string;
+  tagline: string;
+  description: string;
+  color: string;
+  imageUrl: string;
+  order: number;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export const getHeroSteps = cache(async (language: 'en' | 'ar' = 'en'): Promise<ApiResponse<LocalizedHeroStep[]>> => {
   try {
     const steps = await db.heroStep.findMany({
       orderBy: { order: 'asc' }
-    })
+    });
     
+    const localizedSteps = steps.map(step => ({
+      id: step.id,
+      title: language === 'en' ? step.title_en : step.title_ar,
+      tagline: language === 'en' ? step.tagline_en : step.tagline_ar,
+      description: language === 'en' ? step.description_en : step.description_ar,
+      color: step.color,
+      imageUrl: step.imageUrl,
+      order: step.order,
+      createdAt: step.createdAt,
+      updatedAt: step.updatedAt
+    }));
+
     return { 
       success: true, 
-      data: steps 
+      data: localizedSteps 
     }
   } catch (error) {
     console.error('Error fetching hero steps:', error)

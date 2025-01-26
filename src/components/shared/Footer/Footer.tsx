@@ -13,8 +13,15 @@ import {
 } from "lucide-react";
 import AnimatedNetworkBackground from "../Nav/AnimatedBackground";
 import Clients from "../Clients/Clients";
+import { useLanguage } from "@/context/LanguageContext";
+import { LocalizedFooter } from "@/app/actions/pages/footer";
 
-export default function Footer() {
+interface FooterProps {
+  footer: LocalizedFooter;
+}
+
+export default function Footer({ footer }: FooterProps) {
+  const { isRTL } = useLanguage();
   const footerRef = React.useRef(null);
   const isInView = useInView(footerRef, { once: false });
   const footerColor = "#1E66AA";
@@ -62,7 +69,7 @@ export default function Footer() {
   return (
     <footer
       ref={footerRef}
-      className="relative py-16 overflow-hidden border-t border-gray-200"
+      className={`relative py-16 overflow-hidden border-t border-gray-200 ${isRTL ? 'rtl' : 'ltr'}`}
       style={gradientStyle}
     >
       <AnimatedNetworkBackground color={footerColor} />
@@ -83,7 +90,7 @@ export default function Footer() {
               WebkitTextFillColor: "transparent",
             }}
           >
-            {Array.from("Tech Start").map((letter, i) => (
+            {Array.from(footer.techStartTitle).map((letter, i) => (
               <motion.span
                 key={i}
                 custom={i}
@@ -107,36 +114,49 @@ export default function Footer() {
           >
             <motion.div
               variants={itemVariants}
-              className="flex justify-center md:justify-start space-x-6"
+              className={`flex justify-center ${isRTL ? 'md:justify-end space-x-reverse' : 'md:justify-start'} space-x-6`}
             >
-              {["Privacy Policy", "Terms of Use", "Trust"].map((text, i) => (
+              {[
+                { text: footer.privacyPolicy, href: '/privacy-policy' },
+                { text: footer.termsOfUse, href: '/terms-of-use' },
+                { text: footer.trust, href: '/trust' }
+              ].map((item, i) => (
                 <Link
                   key={i}
-                  href="#"
+                  href={item.href}
                   className="text-sm font-medium text-gray-600 hover:text-[#91268f] transition-colors"
                 >
-                  {text}
+                  {item.text}
                 </Link>
               ))}
             </motion.div>
 
             <motion.p
               variants={itemVariants}
-              className="text-sm text-gray-600 text-center"
+              className={`text-sm text-gray-600 text-center ${isRTL ? 'text-right' : 'text-left'}`}
             >
-              <span>© Tech Start. All rights reserved.</span>
+              <span>{footer.copyright}</span>
             </motion.p>
 
             <motion.div
               variants={itemVariants}
-              className="flex justify-center md:justify-end space-x-4"
+              className={`flex justify-center ${isRTL ? 'md:justify-start space-x-reverse' : 'md:justify-end'} space-x-4`}
             >
-              {[Instagram, Linkedin, Github, Youtube, Facebook, Twitter].map(
-                (Icon, i) => (
+              {[
+                { Icon: Instagram, href: footer.socialLinks.instagram },
+                { Icon: Linkedin, href: footer.socialLinks.linkedin },
+                { Icon: Github, href: footer.socialLinks.github },
+                { Icon: Youtube, href: footer.socialLinks.youtube },
+                { Icon: Facebook, href: footer.socialLinks.facebook },
+                { Icon: Twitter, href: footer.socialLinks.twitter }
+              ].filter(item => item.href).map(
+                ({ Icon, href }, i) => (
                   <Link
                     key={i}
-                    href="#"
+                    href={href || '#'}
                     className="p-2 rounded-full bg-white/80 hover:bg-[#91268f]/10 text-gray-600 hover:text-[#91268f] transition-all duration-300 shadow-lg hover:shadow-xl"
+                    target="_blank"
+                    rel="noopener noreferrer"
                   >
                     <Icon size={20} />
                   </Link>

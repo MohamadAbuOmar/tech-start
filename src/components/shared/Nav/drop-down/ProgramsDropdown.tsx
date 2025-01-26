@@ -3,6 +3,7 @@
 import React, { useState, useRef, Dispatch, SetStateAction } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
+import { useLanguage } from "@/context/LanguageContext";
 
 type Position = {
   left: number;
@@ -15,6 +16,7 @@ export const ProgramsDropdown = ({
 }: {
   setPosition: Dispatch<SetStateAction<Position>>;
 }) => {
+  const { language } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
   const [activeItem, setActiveItem] = useState<string | null>(null);
   const [activeSubItem, setActiveSubItem] = useState<string | null>(null);
@@ -126,7 +128,7 @@ export const ProgramsDropdown = ({
       }}
       className="relative z-10 block cursor-pointer px-3 py-1.5 text-base font-medium text-[#1b316e] transition-colors hover:text-white"
     >
-      Programs
+      {language === 'en' ? 'Programs' : 'البرامج'}
       <AnimatePresence>
         {isOpen && (
           <motion.div

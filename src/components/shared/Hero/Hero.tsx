@@ -10,45 +10,25 @@ import growthSvg from "../../../../public/svg/Market Growth.json";
 import developmentSvg from "../../../../public/svg/Talent Development .json";
 import infrastructureSvg from "../../../../public/svg/IT Infrastructure .json";
 import AnimatedNetworkBackground from "../Nav/AnimatedBackground";
+import { useLanguage } from "@/context/LanguageContext";
+import { LocalizedHeroStep } from "@/app/actions/pages/hero";
 
-const steps = [
-  {
-    title: "Innovation Hub",
-    tagline: "Future-Ready Solutions",
-    description:
-      "Revolutionizing business through cutting-edge technology solutions and creative approaches. We help you stay ahead of the curve.",
-    color: "#91268f",
-    animation: innovationSvg,
-  },
-  {
-    title: "Market Growth",
-    tagline: "Expand Your Reach",
-    description:
-      "Expanding your market reach and driving sustainable business growth strategies. We help you conquer new territories and increase your market share.",
-    color: "#1b75bb",
-    animation: growthSvg,
-  },
-  {
-    title: "Talent Development",
-    tagline: "Empower Your Team",
-    description:
-      "Nurturing skills and empowering teams to achieve their highest potential. We help you build a workforce ready for the challenges of tomorrow.",
-    color: "#1c225b",
-    animation: developmentSvg,
-  },
-  {
-    title: "IT Infrastructure",
-    tagline: "Solid Foundations",
-    description:
-      "Building robust and scalable technology foundations for your success. We ensure your IT backbone is strong, secure, and future-proof.",
-    color: "#7fafcb",
-    animation: infrastructureSvg,
-  },
-];
+// Map animation files to step titles
+const animationMap: Record<string, typeof innovationSvg> = {
+  "Innovation Hub": innovationSvg,
+  "Market Growth": growthSvg,
+  "Talent Development": developmentSvg,
+  "IT Infrastructure": infrastructureSvg,
+};
 
 const STEP_DURATION = 5000;
 
-const Hero = () => {
+interface HeroProps {
+  steps: LocalizedHeroStep[];
+}
+
+const Hero = ({ steps }: HeroProps) => {
+  const { language, isRTL } = useLanguage();
   const [currentStep, setCurrentStep] = useState(0);
   const [key, setKey] = useState(0);
   const controls = useAnimation();
@@ -58,7 +38,7 @@ const Hero = () => {
   const nextStep = useCallback(() => {
     setCurrentStep((prev) => (prev + 1) % steps.length);
     setKey((prev) => prev + 1);
-  }, []);
+  }, [steps.length]);
 
   useEffect(() => {
     const interval = setInterval(nextStep, STEP_DURATION);
@@ -76,7 +56,7 @@ const Hero = () => {
       width: "100%",
       transition: { duration: STEP_DURATION / 1000, ease: "linear" },
     });
-  }, [currentStep, controls, progressControls]);
+  }, [currentStep, controls, progressControls, steps]);
 
   const handleTabClick = (index: number) => {
     setCurrentStep(index);
@@ -104,7 +84,7 @@ const Hero = () => {
       <AnimatedNetworkBackground color={steps[currentStep].color} />
       <Navbar />
       <div className="container relative mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center min-h-[calc(100vh-80px)] py-20">
+        <div className={`grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center min-h-[calc(100vh-80px)] py-20 ${isRTL ? 'lg:rtl' : 'lg:ltr'}`}>
           <AnimatePresence mode="wait">
             <motion.div
               key={currentStep}
@@ -122,7 +102,7 @@ const Hero = () => {
                   className="inline-block"
                 >
                   <span
-                    className="inline-flex items-center px-4 py-1.5 rounded-full text-sm font-medium"
+                    className={`inline-flex items-center px-4 py-1.5 rounded-full text-sm font-medium ${isRTL ? 'mr-0 ml-auto' : ''}`}
                     style={{
                       backgroundColor: `${steps[currentStep].color}20`,
                       color: '#862996',
@@ -131,7 +111,7 @@ const Hero = () => {
                     {steps[currentStep].tagline}
                   </span>
                 </motion.div>
-                <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight">
+                <h1 className={`text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight ${isRTL ? 'text-right' : 'text-left'}`}>
                   <motion.span
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -143,7 +123,7 @@ const Hero = () => {
                   >
                     {steps[currentStep].title}
                   </motion.span>
-                  <span className="block mt-2">Solutions</span>
+                  <span className="block mt-2">{language === 'en' ? 'Solutions' : 'حلول'}</span>
                 </h1>
               </div>
 
@@ -151,7 +131,7 @@ const Hero = () => {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.4 }}
-                className="text-lg sm:text-xl text-[#142451] leading-relaxed max-w-xl"
+                className={`text-lg sm:text-xl text-[#142451] leading-relaxed max-w-xl ${isRTL ? 'text-right' : 'text-left'}`}
               >
                 {steps[currentStep].description}
               </motion.p>
@@ -160,7 +140,7 @@ const Hero = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.5 }}
-                className="flex flex-col sm:flex-row items-center gap-4 pt-4"
+                className={`flex flex-col sm:flex-row items-center gap-4 pt-4 ${isRTL ? 'sm:flex-row-reverse' : 'sm:flex-row'}`}
               >
                 <RainbowButton
                   className="w-full sm:w-auto px-8 py-4 text-lg font-semibold shadow-lg shadow-current/20 hover:shadow-xl hover:shadow-current/30 transition-all duration-300"
@@ -169,7 +149,7 @@ const Hero = () => {
                     color: "white",
                   }}
                 >
-                  Get Started Now
+                  {language === 'en' ? 'Get Started Now' : 'ابدأ الآن'}
                 </RainbowButton>
               </motion.div>
             </motion.div>
@@ -186,11 +166,13 @@ const Hero = () => {
                 className="relative w-full h-[300px] sm:h-[350px] md:h-[400px] lg:h-[450px] xl:h-[500px] rounded-2xl bg-white/50 shadow-xl overflow-hidden backdrop-blur-sm"
                 style={{ boxShadow: `0 0 40px ${steps[currentStep].color}30` }}
               >
-                <Lottie
-                  animationData={steps[currentStep].animation}
-                  loop={true}
-                  className="w-full h-full object-cover"
-                />
+                <div className={isRTL ? 'transform scale-x-[-1]' : ''}>
+                  <Lottie
+                    animationData={animationMap[steps[currentStep].title] || innovationSvg}
+                    loop={true}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
                 <div
                   className="absolute inset-0 bg-gradient-to-t from-white via-transparent to-transparent"
                   style={{
@@ -201,7 +183,7 @@ const Hero = () => {
             </AnimatePresence>
 
             <div className="space-y-6">
-              <div className="flex flex-wrap md:flex-nowrap justify-center md:justify-between gap-4">
+              <div className={`flex flex-wrap md:flex-nowrap justify-center md:justify-between gap-4 ${isRTL ? 'flex-row-reverse' : ''}`}>
                 {steps.map((step, index) => (
                   <motion.button
                     key={index}
@@ -222,13 +204,14 @@ const Hero = () => {
                     }}
                     whileTap={{ scale: 0.95 }}
                     onClick={() => handleTabClick(index)}
+                    aria-label={language === 'en' ? `Switch to ${step.title}` : `التبديل إلى ${step.title}`}
                   >
                     {step.title}
                   </motion.button>
                 ))}
               </div>
               <motion.div
-                className="h-2 bg-gray-200 rounded-full overflow-hidden"
+                className={`h-2 bg-gray-200 rounded-full overflow-hidden ${isRTL ? 'rotate-180' : ''}`}
               >
                 <motion.div
                   key={key}
