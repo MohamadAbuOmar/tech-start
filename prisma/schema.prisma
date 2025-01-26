@@ -102,19 +102,54 @@ model Stat {
   icon    String
 }
 
-model Program {
-  id             String   @id @default(cuid())
-  name_en        String
-  name_ar        String
-  description_en String
-  description_ar String
-  imageUrl       String
-  nameColor      String   @default("#1b316e")
-  descColor      String   @default("#862996")
-  order          Int      @default(0)
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @default(now())
+enum ProgramType {
+  PIONEER
+  UPSKILL
+}
 
+model Program {
+  id                String     @id @default(cuid())
+  type              ProgramType
+  name_en           String
+  name_ar           String
+  description_en    String
+  description_ar    String
+  imageUrl          String
+  nameColor         String     @default("#1b316e")
+  descColor         String     @default("#862996")
+  order             Int        @default(0)
+  // Hero section
+  badge_en          String
+  badge_ar          String
+  heroTitle_en      String
+  heroTitle_ar      String
+  heroDesc_en       String
+  heroDesc_ar       String
+  heroImage         String
+  // Tab content
+  overview_en       String
+  overview_ar       String
+  features          Json?      // Array of features with bilingual content
+  // FAQ section
+  faqs             ProgramFaq[]
+  createdAt         DateTime   @default(now())
+  updatedAt         DateTime   @default(now())
+
+  @@index([type])
+  @@index([order])
+}
+
+model ProgramFaq {
+  id          String   @id @default(cuid())
+  programId   String
+  question_en String
+  question_ar String
+  answer_en   String
+  answer_ar   String
+  order       Int      @default(0)
+  program     Program  @relation(fields: [programId], references: [id], onDelete: Cascade)
+
+  @@index([programId])
   @@index([order])
 }
 

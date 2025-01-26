@@ -1,7 +1,7 @@
 "use client";
 
-import { createProgram } from "@/app/actions/pages/programsAction";
-import ProgramForm from "../components/ProgramForm";
+import { createProgram } from "@/app/actions/pages/programs";
+import { ProgramForm } from "../components/ProgramForm";
 
 export default function CreateProgram() {
   return (

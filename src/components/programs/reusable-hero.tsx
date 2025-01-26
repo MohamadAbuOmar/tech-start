@@ -52,7 +52,7 @@ export default function ReusableHero({
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.2 }}
-                  className="inline-block px-4 py-1 rounded-full bg-blue-100 text-blue-700 text-sm font-medium"
+                  className={`inline-block px-4 py-1 rounded-full bg-blue-100 text-blue-700 text-sm font-medium ${isRTL ? 'font-[Noto Sans Arabic]' : ''}`}
                 >
                   {badge}
                 </motion.span>
@@ -60,7 +60,7 @@ export default function ReusableHero({
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.3 }}
-                  className="text-4xl lg:text-6xl font-bold tracking-tight text-gray-900"
+                  className={`text-4xl lg:text-6xl font-bold tracking-tight text-gray-900 ${isRTL ? 'font-[Noto Sans Arabic]' : ''}`}
                 >
                   {title}{" "}
                   <span className="text-blue-600 relative">
@@ -70,7 +70,7 @@ export default function ReusableHero({
                       height="20"
                       viewBox="0 0 120 20"
                       fill="none"
-                      className="absolute -bottom-2 left-0 w-full"
+                      className={`absolute -bottom-2 ${isRTL ? 'right-0' : 'left-0'} w-full`}
                       initial={{ pathLength: 0 }}
                       animate={{ pathLength: 1 }}
                       transition={{ delay: 0.5, duration: 0.8 }}
@@ -88,7 +88,7 @@ export default function ReusableHero({
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.4 }}
-                  className="text-xl text-gray-600 max-w-2xl"
+                  className={`text-xl text-gray-600 max-w-2xl ${isRTL ? 'font-[Noto Sans Arabic]' : ''}`}
                 >
                   {description}
                 </motion.p>
@@ -101,14 +101,14 @@ export default function ReusableHero({
               >
                 <Button
                   size="lg"
-                  className="bg-blue-600 hover:bg-blue-700 text-white px-8"
+                  className={`bg-blue-600 hover:bg-blue-700 text-white px-8 ${isRTL ? 'font-[Noto Sans Arabic]' : ''}`}
                 >
                   {primaryButtonText}
                 </Button>
                 <Button
                   size="lg"
                   variant="outline"
-                  className="border-blue-200 hover:bg-blue-50"
+                  className={`border-blue-200 hover:bg-blue-50 ${isRTL ? 'font-[Noto Sans Arabic]' : ''}`}
                 >
                   {secondaryButtonText}
                 </Button>
@@ -143,8 +143,8 @@ export default function ReusableHero({
               <div className="size-12 rounded-lg bg-blue-100 flex items-center justify-center mb-6">
                 {feature.icon}
               </div>
-              <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
-              <p className="text-gray-600">{feature.description}</p>
+              <h3 className={`text-xl font-semibold mb-2 ${isRTL ? 'font-[Noto Sans Arabic]' : ''}`}>{feature.title}</h3>
+              <p className={`text-gray-600 ${isRTL ? 'font-[Noto Sans Arabic]' : ''}`}>{feature.description}</p>
             </div>
           ))}
         </motion.div>

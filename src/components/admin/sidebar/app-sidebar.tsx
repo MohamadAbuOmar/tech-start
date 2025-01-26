@@ -78,6 +78,14 @@ const data: { navMain: NavItem[] } = {
           title: "Focus Areas",
           url: "/admin/pages/focusareas",
         },
+        {
+          title: "Pioneer Program",
+          url: "/admin/pages/programs/pioneer",
+        },
+        {
+          title: "Upskill Program",
+          url: "/admin/pages/programs/upskill",
+        },
       ]
     },
     {
