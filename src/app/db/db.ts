@@ -7,12 +7,7 @@ const prismaClientSingleton = () => {
         url: process.env.DATABASE_URL
       }
     },
-    log: ['error', 'warn'],
-    // Add connection pooling configuration
-    connection: {
-      keepAlive: true,
-      keepAliveInitialDelay: 10000
-    }
+    log: ['error', 'warn']
   })
 }
 
