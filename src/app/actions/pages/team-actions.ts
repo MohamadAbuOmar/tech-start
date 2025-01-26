@@ -1,7 +1,11 @@
 "use server"
 
+// Runtime configuration moved to route segment config
+
+import { cache } from "react"
 import db from "@/app/db/db"
 import { revalidatePath } from "next/cache"
+import { ApiResponse } from "@/types/api"
 
 export type TeamMemberData = {
   nameEn: string
@@ -13,11 +17,40 @@ export type TeamMemberData = {
   imageUrl: string
 }
 
-export async function getTeamMembers() {
-  return db.teamMember.findMany({
-    orderBy: { createdAt: "desc" },
-  })
+export interface LocalizedTeamMember {
+  id: string
+  name: string
+  jobTitle: string
+  description: string
+  imageUrl: string
 }
+
+export const getTeamMembers = cache(async (language: 'en' | 'ar' = 'en'): Promise<ApiResponse<LocalizedTeamMember[]>> => {
+  try {
+    const members = await db.teamMember.findMany({
+      orderBy: { createdAt: "desc" },
+    });
+
+    const localizedMembers = members.map(member => ({
+      id: member.id,
+      name: language === 'en' ? member.nameEn : member.nameAr,
+      jobTitle: language === 'en' ? member.jobTitleEn : member.jobTitleAr,
+      description: language === 'en' ? member.descriptionEn : member.descriptionAr,
+      imageUrl: member.imageUrl,
+    }));
+
+    return {
+      success: true,
+      data: localizedMembers
+    };
+  } catch (error) {
+    console.error('Error fetching team members:', error);
+    return {
+      success: false,
+      error: 'Failed to fetch team members'
+    };
+  }
+});
 
 export async function getTeamMemberById(id: string) {
   return db.teamMember.findUnique({

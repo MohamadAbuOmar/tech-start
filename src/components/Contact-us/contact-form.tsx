@@ -17,8 +17,9 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Send } from "lucide-react";
-import { submitContactForm } from "@/app/actions/pages/contact-actions";
+import { submitContactForm, getContactInfo } from "@/app/actions/pages/contact";
 import { useToast } from "@/hooks/use-toast";
+import { useEffect, useState as useStateEffect } from "react";
 
 const contactFormSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -29,9 +30,24 @@ const contactFormSchema = z.object({
 
 type ContactFormValues = z.infer<typeof contactFormSchema>;
 
-export function ContactForm() {
+interface ContactFormProps {
+  language: 'en' | 'ar';
+}
+
+export function ContactForm({ language }: ContactFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
+  const [translations, setTranslations] = useState<Awaited<ReturnType<typeof getContactInfo>>['data']>();
+
+  useEffect(() => {
+    const fetchTranslations = async () => {
+      const response = await getContactInfo(language);
+      if (response.success) {
+        setTranslations(response.data);
+      }
+    };
+    fetchTranslations();
+  }, [language]);
 
   const form = useForm<ContactFormValues>({
     resolver: zodResolver(contactFormSchema),
@@ -48,7 +64,7 @@ export function ContactForm() {
     try {
       await submitContactForm(data);
       toast({
-        title: "Message sent successfully",
+        title: translations?.successMessage || "Message sent successfully",
         description:
           "Thank you for your submission. We'll get back to you soon!",
         duration: 5000,
@@ -77,9 +93,9 @@ export function ContactForm() {
           name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Name</FormLabel>
+              <FormLabel>{translations?.formLabels.name || "Name"}</FormLabel>
               <FormControl>
-                <Input placeholder="Your name" {...field} />
+                <Input placeholder={translations?.formPlaceholders.name || "Your name"} {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -90,9 +106,9 @@ export function ContactForm() {
           name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Email</FormLabel>
+              <FormLabel>{translations?.formLabels.email || "Email"}</FormLabel>
               <FormControl>
-                <Input type="email" placeholder="your@email.com" {...field} />
+                <Input type="email" placeholder={translations?.formPlaceholders.email || "your@email.com"} {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -103,9 +119,9 @@ export function ContactForm() {
           name="subject"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Subject</FormLabel>
+              <FormLabel>{translations?.formLabels.subject || "Subject"}</FormLabel>
               <FormControl>
-                <Input placeholder="How can we help?" {...field} />
+                <Input placeholder={translations?.formPlaceholders.subject || "How can we help?"} {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -116,10 +132,10 @@ export function ContactForm() {
           name="message"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Message</FormLabel>
+              <FormLabel>{translations?.formLabels.message || "Message"}</FormLabel>
               <FormControl>
                 <Textarea
-                  placeholder="Your message here..."
+                  placeholder={translations?.formPlaceholders.message || "Your message here..."}
                   className="min-h-[150px]"
                   {...field}
                 />
@@ -133,7 +149,7 @@ export function ContactForm() {
           className="w-full bg-gradient-to-r from-[#24386F] to-[#872996] hover:from-[#1c2d59] hover:to-[#6e217a] text-white rounded-lg py-3 transition-all duration-300"
           disabled={isSubmitting}
         >
-          {isSubmitting ? "Sending..." : "Send Message"}
+          {isSubmitting ? "Sending..." : translations?.submitButton || "Send Message"}
           <Send className="ml-2 h-4 w-4" />
         </Button>
       </form>

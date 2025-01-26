@@ -4,57 +4,18 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, ArrowRight, Pause, Play } from "lucide-react";
+import { LocalizedTeamMember } from "@/app/actions/pages/team-actions";
 
-const OurTeam = () => {
-  const team = [
-    {
-      quote:
-        "The attention to detail and innovative features have completely transformed our workflow. This is exactly what we've been looking for.",
-      name: "Farah Said",
-      designation: "Communication Specialist",
-      src: "https://www.techstart.ps//public/files/Final/_MG_1215.jpg",
-    },
-    {
-      quote:
-        "Implementation was seamless and the results exceeded our expectations. The platform's flexibility is remarkable.",
-      name: "Ali Gharabeh",
-      designation: "Monitoring and Evaluation Specialist",
-      src: "https://www.techstart.ps//public/files/image/WhatsApp%20Image%202023-09-10%20at%202.05.20%20PM.jpeg",
-    },
-    {
-      quote:
-        "This solution has significantly improved our team's productivity. The intuitive interface makes complex tasks simple.",
-      name: "Mira Stephan",
-      designation: "Environmental and Social Officer",
-      src: "https://www.techstart.ps//public/files/mira%20modified%20.jpeg",
-    },
-    {
-      quote:
-        "Outstanding support and robust features. It's rare to find a product that delivers on all its promises.",
-      name: "Hasan AlAref",
-      designation: "IT Service Capabilities Program Manager",
-      src: "https://www.techstart.ps//public/files/Hasan.jpg",
-    },
-    {
-      quote:
-        "The scalability and performance have been game-changing for our organization. Highly recommend to any growing business.",
-      name: "Leen El-Far",
-      designation: "Technical and Grants Support Officer",
-      src: "https://www.techstart.ps//public/files/leen%20website.jpg",
-    },
-    {
-      quote:
-        "The scalability and performance have been game-changing for our organization. Highly recommend to any growing business.",
-      name: "Abdallah Abu Ajamieh",
-      designation: "Project Development Consultant",
-      src: "https://www.techstart.ps//public/files/image/1649195454890-_2_.png",
-    },
-  ];
+interface OurTeamProps {
+  teamData: LocalizedTeamMember[];
+}
+
+const OurTeam = ({ teamData }: OurTeamProps) => {
 
   const [currentPage, setCurrentPage] = useState(0);
   const [isAutoPlay, setIsAutoPlay] = useState(true);
   const itemsPerPage = 3;
-  const totalPages = Math.ceil(team.length / itemsPerPage);
+  const totalPages = Math.ceil(teamData.length / itemsPerPage);
 
   useEffect(() => {
     if (!isAutoPlay) return;
@@ -151,14 +112,14 @@ const OurTeam = () => {
               }}
               className="grid grid-cols-1 md:grid-cols-3 gap-8 px-4"
             >
-              {team
+              {teamData
                 .slice(
                   currentPage * itemsPerPage,
                   (currentPage + 1) * itemsPerPage
                 )
                 .map((member, index) => (
                   <motion.div
-                    key={member.name}
+                    key={member.id}
                     variants={cardVariants}
                     initial="hidden"
                     animate="visible"
@@ -171,7 +132,7 @@ const OurTeam = () => {
                       <div className="relative z-10">
                         <div className="aspect-[4/5] overflow-hidden rounded-xl mb-6">
                           <motion.img
-                            src={member.src}
+                            src={member.imageUrl}
                             alt={member.name}
                             className="w-full h-full object-cover"
                             whileHover={{ scale: 1.05 }}
@@ -188,10 +149,10 @@ const OurTeam = () => {
                             {member.name}
                           </h3>
                           <p className="text-sm font-medium text-purple-500/80 dark:text-purple-400/80">
-                            {member.designation}
+                            {member.jobTitle}
                           </p>
                           <p className="text-gray-600 dark:text-gray-300 line-clamp-3 group-hover:line-clamp-none transition-all duration-300">
-                            {member.quote}
+                            {member.description}
                           </p>
                         </motion.div>
                       </div>

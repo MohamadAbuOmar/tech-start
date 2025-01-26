@@ -3,14 +3,41 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
+import { useLanguage } from "@/context/LanguageContext"
 
-export function InfrastructureContent() {
-  const coveredItems = [
-    { icon: "🖥️", name: "IT Equipment", description: "Computers and technology equipment" },
-    { icon: "🌐", name: "Connectivity", description: "High-speed internet connections" },
-    { icon: "🏢", name: "Office Setup", description: "Furniture and basic infrastructure" },
-    { icon: "💻", name: "Remote Work", description: "Technology to facilitate remote work" },
-  ]
+interface InfrastructureContentProps {
+  data: {
+    title: string;
+    description: string;
+    coveredItems: Array<{
+      icon: string;
+      name: string;
+      description: string;
+    }>;
+    funding: {
+      standard: {
+        title: string;
+        description: string;
+      };
+      special: {
+        title: string;
+        description: string;
+      };
+      gaza: {
+        title: string;
+        description: string;
+      };
+    };
+    notes: string[];
+    buttons: {
+      guidelines: string;
+      apply: string;
+    };
+  };
+}
+
+export function InfrastructureContent({ data }: InfrastructureContentProps) {
+  const { language } = useLanguage();
 
   return (
     <motion.div
@@ -20,18 +47,17 @@ export function InfrastructureContent() {
     >
       <Card className="overflow-hidden">
         <CardHeader className="bg-primary text-primary-foreground p-6">
-          <CardTitle className="text-3xl font-bold">IT Business Infrastructure Grant</CardTitle>
+          <CardTitle className="text-3xl font-bold">{data.title}</CardTitle>
         </CardHeader>
         <CardContent className="p-6 space-y-8">
           <div className="bg-gray-50 p-6 rounded-lg">
             <p className="text-lg text-gray-700 leading-relaxed">
-              Provides matching grants to eligible IT service firms to finance upgrading of business 
-              infrastructure, with a special focus on Gaza while remaining accessible to West Bank companies.
+              {data.description}
             </p>
           </div>
 
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-            {coveredItems.map((item, index) => (
+            {data.coveredItems.map((item, index) => (
               <Card key={index} className="text-center">
                 <CardContent className="pt-6">
                   <span className="text-4xl mb-4 block">{item.icon}</span>
@@ -51,16 +77,16 @@ export function InfrastructureContent() {
             <CardContent>
               <div className="grid gap-4 md:grid-cols-3">
                 <div className="bg-blue-50 p-4 rounded-lg">
-                  <h4 className="font-semibold mb-2">Standard Companies</h4>
-                  <p className="text-blue-700">Up to 70% co-financing</p>
+                  <h4 className="font-semibold mb-2">{data.funding.standard.title}</h4>
+                  <p className="text-blue-700">{data.funding.standard.description}</p>
                 </div>
                 <div className="bg-purple-50 p-4 rounded-lg">
-                  <h4 className="font-semibold mb-2">Special Categories</h4>
-                  <p className="text-purple-700">Up to 80% for women-led & smaller firms</p>
+                  <h4 className="font-semibold mb-2">{data.funding.special.title}</h4>
+                  <p className="text-purple-700">{data.funding.special.description}</p>
                 </div>
                 <div className="bg-green-50 p-4 rounded-lg">
-                  <h4 className="font-semibold mb-2">Gaza-Based</h4>
-                  <p className="text-green-700">Up to 80% co-financing</p>
+                  <h4 className="font-semibold mb-2">{data.funding.gaza.title}</h4>
+                  <p className="text-green-700">{data.funding.gaza.description}</p>
                 </div>
               </div>
             </CardContent>
@@ -69,26 +95,24 @@ export function InfrastructureContent() {
           <Card>
             <CardHeader>
               <CardTitle className="text-xl font-semibold text-primary">
-                <Badge variant="outline" className="mb-2">Important Notes</Badge>
+                <Badge variant="outline" className="mb-2">{language === 'en' ? 'Important Notes' : 'ملاحظات مهمة'}</Badge>
               </CardTitle>
             </CardHeader>
             <CardContent>
               <ul className="list-disc pl-6 space-y-2 text-gray-700">
-                <li>Asset tagging required for equipment tracking</li>
-                <li>Physical inventory checks at midterm and project end</li>
-                <li>Grant repayment required for missing equipment</li>
-                <li>Rolling basis applications</li>
-                <li>Business plan must demonstrate infrastructure needs</li>
+                {data.notes.map((note, index) => (
+                  <li key={index}>{note}</li>
+                ))}
               </ul>
             </CardContent>
           </Card>
 
           <div className="flex gap-4 justify-center">
             <Button asChild variant="outline">
-              <Link href="#">View Guidelines</Link>
+              <Link href="#">{data.buttons.guidelines}</Link>
             </Button>
             <Button asChild>
-              <Link href="#">Apply Now</Link>
+              <Link href="#">{data.buttons.apply}</Link>
             </Button>
           </div>
         </CardContent>

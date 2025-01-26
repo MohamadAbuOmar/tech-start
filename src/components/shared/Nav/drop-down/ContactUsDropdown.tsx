@@ -3,6 +3,7 @@
 import React, { useState, useRef, Dispatch, SetStateAction } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
+import { useLanguage } from "@/context/LanguageContext";
 
 type Position = {
   left: number;
@@ -15,23 +16,24 @@ export const ContactUsDropdown = ({
 }: {
   setPosition: Dispatch<SetStateAction<Position>>;
 }) => {
+  const { language } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
   const ref = useRef<null | HTMLLIElement>(null);
 
   const menuItems = [
     {
       id: "contact-us",
-      name: "Contact Us",
+      name: language === 'en' ? "Contact Us" : "اتصل بنا",
       href: "/Contact-us",
     },
     {
       id: "complaints",
-      name: "Complaints",
+      name: language === 'en' ? "Complaints" : "الشكاوى",
       href: "/submit-complaint",
     },
     {
       id: "faqs",
-      name: "FAQs",
+      name: language === 'en' ? "FAQs" : "الأسئلة الشائعة",
       href: "/FAQs",
     },
   ];
@@ -54,7 +56,7 @@ export const ContactUsDropdown = ({
       }}
       className="relative z-10 block cursor-pointer px-3 py-1.5 text-base font-medium text-[#1b316e] transition-colors hover:text-white"
     >
-      Contact Us
+      {language === 'en' ? 'Contact Us' : 'اتصل بنا'}
       <AnimatePresence>
         {isOpen && (
           <motion.div

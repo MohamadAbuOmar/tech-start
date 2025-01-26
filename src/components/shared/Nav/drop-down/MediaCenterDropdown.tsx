@@ -3,6 +3,7 @@
 import React, { useState, useRef, Dispatch, SetStateAction } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
+import { useLanguage } from "@/context/LanguageContext";
 
 type Position = {
     left: number;
@@ -15,6 +16,7 @@ export const MediaCenterDropdown = ({
 }: {
     setPosition: Dispatch<SetStateAction<Position>>;
 }) => {
+    const { language } = useLanguage();
     const [isOpen, setIsOpen] = useState(false);
     const [activeItem, setActiveItem] = useState<string | null>(null);
     const ref = useRef<null | HTMLLIElement>(null);
@@ -22,19 +24,19 @@ export const MediaCenterDropdown = ({
     const menuItems = [
         {
             id: "gallery",
-            name: "Gallery",
+            name: language === 'en' ? "Gallery" : "المعرض",
             subItems: [
-                { id: "photo-gallery", name: "Photo Gallery", href: "/media-center/gallery/photos" },
-                { id: "videos", name: "Videos", href: "/media-center/gallery/videos" },
+                { id: "photo-gallery", name: language === 'en' ? "Photo Gallery" : "معرض الصور", href: "/media-center/gallery/photos" },
+                { id: "videos", name: language === 'en' ? "Videos" : "الفيديوهات", href: "/media-center/gallery/videos" },
             ],
         },
         {
             id: "news",
-            name: "News",
+            name: language === 'en' ? "News" : "الأخبار",
             subItems: [
-                { id: "news-press", name: "News & Press Releases", href: "/media-center/news" },
-                { id: "publications", name: "Publications", href: "/media-center/news/publications" },
-                { id: "announcements", name: "Announcements", href: "/media-center/news/announcements" }
+                { id: "news-press", name: language === 'en' ? "News & Press Releases" : "الأخبار والبيانات الصحفية", href: "/media-center/news" },
+                { id: "publications", name: language === 'en' ? "Publications" : "المنشورات", href: "/media-center/news/publications" },
+                { id: "announcements", name: language === 'en' ? "Announcements" : "الإعلانات", href: "/media-center/news/announcements" }
             ],
         },
     ];
@@ -58,7 +60,7 @@ export const MediaCenterDropdown = ({
             }}
             className="relative z-10 block cursor-pointer px-3 py-1.5 text-base font-medium text-[#1b316e] transition-colors hover:text-white"
         >
-            Media Center
+            {language === 'en' ? 'Media Center' : 'المركز الإعلامي'}
             <AnimatePresence>
                 {isOpen && (
                     <motion.div

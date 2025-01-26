@@ -3,8 +3,29 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
+import { useLanguage } from "@/context/LanguageContext"
 
-export function ExpatriateContent() {
+interface ExpatriateContentProps {
+  data: {
+    title: string;
+    description: string;
+    stipendOptions: Array<{
+      title: string;
+      description: string;
+    }>;
+    criteria: {
+      company: string[];
+      individual: string[];
+    };
+    buttons: {
+      guidelines: string;
+      apply: string;
+    };
+  };
+}
+
+export function ExpatriateContent({ data }: ExpatriateContentProps) {
+  const { language } = useLanguage();
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -13,12 +34,12 @@ export function ExpatriateContent() {
     >
       <Card className="overflow-hidden">
         <CardHeader className="bg-primary text-primary-foreground p-6">
-          <CardTitle className="text-3xl font-bold">Expatriate and Diaspora Stipends Grant</CardTitle>
+          <CardTitle className="text-3xl font-bold">{data.title}</CardTitle>
         </CardHeader>
         <CardContent className="p-6 space-y-8">
           <div className="bg-gray-50 p-4 rounded-lg">
             <p className="text-gray-700 leading-relaxed">
-              Supports international staff and Palestinian diaspora with senior expertise to build technical and managerial capacity in Palestinian IT firms. Valid for up to two years with performance-based evaluation.
+              {data.description}
             </p>
           </div>
 
@@ -27,28 +48,22 @@ export function ExpatriateContent() {
               <CardHeader>
                 <CardTitle className="text-xl font-semibold text-primary flex items-center gap-2">
                   <Badge variant="outline" className="text-sm font-normal">
-                    Coverage
+                    {language === 'en' ? 'Coverage' : 'التغطية'}
                   </Badge>
-                  Stipend Options
+                  {language === 'en' ? 'Stipend Options' : 'خيارات المنحة'}
                 </CardTitle>
               </CardHeader>
               <CardContent className="grid gap-4 md:grid-cols-2">
-                <Card className="bg-gray-50">
-                  <CardHeader>
-                    <CardTitle className="text-lg font-semibold text-primary">Option 1</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-gray-700">Up to 70% of basic salary (company covers 30% + bonuses)</p>
-                  </CardContent>
-                </Card>
-                <Card className="bg-gray-50">
-                  <CardHeader>
-                    <CardTitle className="text-lg font-semibold text-primary">Option 2</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-gray-700">Expatriate benefits (relocation, housing, health insurance, etc.)</p>
-                  </CardContent>
-                </Card>
+                {data.stipendOptions.map((option, index) => (
+                  <Card key={index} className="bg-gray-50">
+                    <CardHeader>
+                      <CardTitle className="text-lg font-semibold text-primary">{option.title}</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-gray-700">{option.description}</p>
+                    </CardContent>
+                  </Card>
+                ))}
               </CardContent>
             </Card>
 
@@ -57,17 +72,16 @@ export function ExpatriateContent() {
                 <CardHeader>
                   <CardTitle className="text-xl font-semibold text-primary flex items-center gap-2">
                     <Badge variant="outline" className="text-sm font-normal">
-                      Selection
+                      {language === 'en' ? 'Selection' : 'الاختيار'}
                     </Badge>
-                    Company Criteria
+                    {language === 'en' ? 'Company Criteria' : 'معايير الشركة'}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <ul className="list-disc pl-6 space-y-2 text-gray-700">
-                    <li>Growth potential and sound business plan</li>
-                    <li>Experienced leadership team</li>
-                    <li>Clear technological gaps diagnosis</li>
-                    <li>Detailed expatriate utilization plan</li>
+                    {data.criteria.company.map((criterion, index) => (
+                      <li key={index}>{criterion}</li>
+                    ))}
                   </ul>
                 </CardContent>
               </Card>
@@ -76,17 +90,16 @@ export function ExpatriateContent() {
                 <CardHeader>
                   <CardTitle className="text-xl font-semibold text-primary flex items-center gap-2">
                     <Badge variant="outline" className="text-sm font-normal">
-                      Eligibility
+                      {language === 'en' ? 'Eligibility' : 'الأهلية'}
                     </Badge>
-                    Individual Criteria
+                    {language === 'en' ? 'Individual Criteria' : 'المعايير الفردية'}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <ul className="list-disc pl-6 space-y-2 text-gray-700">
-                    <li>Working abroad for 12+ months</li>
-                    <li>Senior international experience</li>
-                    <li>Physical presence requirement</li>
-                    <li>No immediate family relation to management</li>
+                    {data.criteria.individual.map((criterion, index) => (
+                      <li key={index}>{criterion}</li>
+                    ))}
                   </ul>
                 </CardContent>
               </Card>
@@ -95,10 +108,10 @@ export function ExpatriateContent() {
 
           <div className="flex gap-4 justify-center">
             <Button asChild variant="outline">
-              <Link href="#">View Guidelines</Link>
+              <Link href="#">{data.buttons.guidelines}</Link>
             </Button>
             <Button asChild>
-              <Link href="#">Apply Now</Link>
+              <Link href="#">{data.buttons.apply}</Link>
             </Button>
           </div>
         </CardContent>

@@ -5,6 +5,7 @@ import debounce from "lodash/debounce";
 import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useLanguage } from "@/context/LanguageContext";
 
 interface GalleryFiltersProps {
     onSearch: (term: string) => void;
@@ -13,6 +14,7 @@ interface GalleryFiltersProps {
 }
 
 export const GalleryFilters = ({ onSearch, onSort, title }: GalleryFiltersProps) => {
+    const { language } = useLanguage();
     const debouncedSearch = useCallback((term: string) => {
         debounce(() => {
             onSearch(term);
@@ -36,17 +38,21 @@ export const GalleryFilters = ({ onSearch, onSort, title }: GalleryFiltersProps)
                         </div>
                         <Input
                             className="pl-10 h-10 bg-white/80 hover:bg-white border-gray-200 hover:border-purple-300 focus:border-purple-500 focus:ring-purple-500/20 transition-all rounded-lg"
-                            placeholder="Search events..."
+                            placeholder={language === 'en' ? "Search events..." : "البحث عن الأحداث..."}
                             onChange={(e) => debouncedSearch(e.target.value)}
                         />
                     </div>
                     <Select onValueChange={(value) => onSort(value as 'asc' | 'desc')}>
                         <SelectTrigger className="w-[140px] h-10 bg-white/80 hover:bg-white border-gray-200 hover:border-purple-300 focus:border-purple-500 focus:ring-purple-500/20 transition-all rounded-lg">
-                            <SelectValue placeholder="Sort by date" />
+                            <SelectValue placeholder={language === 'en' ? "Sort by date" : "الترتيب حسب التاريخ"} />
                         </SelectTrigger>
                         <SelectContent className="bg-white border-gray-200">
-                            <SelectItem value="desc" className="hover:bg-purple-50">Newest first</SelectItem>
-                            <SelectItem value="asc" className="hover:bg-purple-50">Oldest first</SelectItem>
+                            <SelectItem value="desc" className="hover:bg-purple-50">
+                                {language === 'en' ? "Newest first" : "الأحدث أولاً"}
+                            </SelectItem>
+                            <SelectItem value="asc" className="hover:bg-purple-50">
+                                {language === 'en' ? "Oldest first" : "الأقدم أولاً"}
+                            </SelectItem>
                         </SelectContent>
                     </Select>
                 </div>

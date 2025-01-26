@@ -3,8 +3,32 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
+import { useLanguage } from "@/context/LanguageContext"
 
-export function NewITServiceContent() {
+interface NewITServiceContentProps {
+  data: {
+    title: string;
+    description: string;
+    coveredCosts: string[];
+    funding: {
+      standard: {
+        title: string;
+        description: string;
+      };
+      special: {
+        title: string;
+        description: string;
+      };
+    };
+    buttons: {
+      guidelines: string;
+      apply: string;
+    };
+  };
+}
+
+export function NewITServiceContent({ data }: NewITServiceContentProps) {
+  const { language } = useLanguage();
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -13,14 +37,12 @@ export function NewITServiceContent() {
     >
       <Card className="overflow-hidden">
         <CardHeader className="bg-primary text-primary-foreground p-6">
-          <CardTitle className="text-3xl font-bold">New IT Service Operations Grant</CardTitle>
+          <CardTitle className="text-3xl font-bold">{data.title}</CardTitle>
         </CardHeader>
         <CardContent className="p-6 space-y-6">
           <div className="bg-gray-50 p-6 rounded-lg">
             <p className="text-lg text-gray-700 leading-relaxed">
-              This grant aims to de-risk and enable the launch of emerging IT services companies 
-              in the West Bank and Gaza IT services market, bringing new technological competencies 
-              and industry expertise to the region.
+              {data.description}
             </p>
           </div>
 
@@ -28,18 +50,14 @@ export function NewITServiceContent() {
             <Card>
               <CardHeader>
                 <CardTitle className="text-xl font-semibold text-primary flex items-center gap-2">
-                  <Badge variant="outline">Covered Costs</Badge>
+                  <Badge variant="outline">{language === 'en' ? 'Covered Costs' : 'التكاليف المغطاة'}</Badge>
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <ul className="list-disc pl-6 space-y-2 text-gray-700">
-                  <li>Business plan development</li>
-                  <li>Working capital</li>
-                  <li>Software and product development</li>
-                  <li>Market testing</li>
-                  <li>Intellectual property protection</li>
-                  <li>Business development</li>
-                  <li>Capacity building</li>
+                  {data.coveredCosts.map((cost, index) => (
+                    <li key={index}>{cost}</li>
+                  ))}
                 </ul>
               </CardContent>
             </Card>
@@ -52,12 +70,12 @@ export function NewITServiceContent() {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="bg-blue-50 p-4 rounded-lg">
-                  <h4 className="font-semibold mb-2">Standard Co-funding</h4>
-                  <p className="text-blue-700">50/50 split between grant and company</p>
+                  <h4 className="font-semibold mb-2">{data.funding.standard.title}</h4>
+                  <p className="text-blue-700">{data.funding.standard.description}</p>
                 </div>
                 <div className="bg-purple-50 p-4 rounded-lg">
-                  <h4 className="font-semibold mb-2">Special Categories</h4>
-                  <p className="text-purple-700">70/30 split for women-led businesses and new entrepreneurs</p>
+                  <h4 className="font-semibold mb-2">{data.funding.special.title}</h4>
+                  <p className="text-purple-700">{data.funding.special.description}</p>
                 </div>
               </CardContent>
             </Card>
@@ -65,10 +83,10 @@ export function NewITServiceContent() {
 
           <div className="flex gap-4 justify-center pt-6">
             <Button asChild variant="outline">
-              <Link href="#">View Guidelines</Link>
+              <Link href="#">{data.buttons.guidelines}</Link>
             </Button>
             <Button asChild>
-              <Link href="#">Apply Now</Link>
+              <Link href="#">{data.buttons.apply}</Link>
             </Button>
           </div>
         </CardContent>

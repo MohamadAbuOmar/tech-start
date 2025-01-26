@@ -5,34 +5,17 @@ import gsap from "gsap";
 import ScrollTrigger from "gsap/ScrollTrigger";
 import ProgramCard from "./ProgramCard";
 import { motion } from "framer-motion";
+import { useLanguage } from "@/context/LanguageContext";
+import { LocalizedProgram } from "@/app/actions/pages/programs";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const programsData = [
-  {
-    id: "card-1",
-    backImage: "/Upskill.png",
-    programName: "UpSkill Program",
-    description:
-      "Accelerate your career with cutting-edge tech skills. Join our comprehensive training program designed for ambitious developers.",
-  },
-  {
-    id: "card-2",
-    backImage: "/pioneer_img.jpg",
-    programName: "Pioneer Program",
-    description:
-      "Lead the next wave of innovation. Our pioneer program empowers tech entrepreneurs with resources and expertise.",
-  },
-  {
-    id: "card-3",
-    backImage: "/Pro3.png",
-    programName: "Accelerate Program",
-    description:
-      "Fast-track your startup's growth with our intensive acceleration program. Access mentorship, funding, and market opportunities.",
-  },
-];
+interface ProgramsSecProps {
+  programs: LocalizedProgram[];
+}
 
-export default function ProgramsSec() {
+export default function ProgramsSec({ programs }: ProgramsSecProps) {
+  const { language, isRTL } = useLanguage();
   const container = useRef<HTMLDivElement>(null);
 
   useGSAP(
@@ -76,18 +59,18 @@ export default function ProgramsSec() {
           transition={{ duration: 0.7, ease: "easeOut" }}
         >
           <h2 className="text-4xl md:text-5xl font-bold text-center mb-4 bg-gradient-to-r from-[#1b316e] to-[#862996] bg-clip-text text-transparent">
-            Explore Our Programs
+            {language === 'en' ? 'Explore Our Programs' : 'استكشف برامجنا'}
           </h2>
           <div className="w-32 h-1.5 bg-gradient-to-r from-[#1b316e] to-[#862996] mx-auto rounded-full mb-16" />
         </motion.div>
 
-        <div className="mt-12 grid gap-8 md:grid-cols-2 lg:grid-cols-3 px-4">
-          {programsData.map((program) => (
+        <div className={`mt-12 grid gap-8 md:grid-cols-2 lg:grid-cols-3 px-4 ${isRTL ? 'rtl' : 'ltr'}`}>
+          {programs.map((program) => (
             <div key={program.id} className="program-card">
               <ProgramCard
                 id={program.id}
-                backImage={program.backImage}
-                programName={program.programName}
+                backImage={program.imageUrl}
+                programName={program.name}
                 description={program.description}
               />
             </div>

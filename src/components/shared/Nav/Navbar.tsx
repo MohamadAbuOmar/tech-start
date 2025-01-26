@@ -11,11 +11,10 @@ import ShinyButton from "@/components/ui/shiny-button";
 import MobileMenu from "./mobile/MobileMenu";
 import { createPortal } from "react-dom";
 import { cn } from "@/lib/utils";
-
-type Language = "en" | "ar";
+import { useLanguage } from "@/context/LanguageContext";
 
 export const Navbar: React.FC = () => {
-  const [language, setLanguage] = useState<Language>("en");
+  const { language, toggleLanguage } = useLanguage();
   const [isMounted, setIsMounted] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -41,10 +40,6 @@ export const Navbar: React.FC = () => {
   useEffect(() => {
     heroRef.current = document.querySelector("#hero-section");
   }, []);
-
-  const toggleLanguage = () => {
-    setLanguage((prev) => (prev === "en" ? "ar" : "en"));
-  };
 
   return (
     <>

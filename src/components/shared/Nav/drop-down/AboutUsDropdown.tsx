@@ -3,6 +3,7 @@
 import React, { useState, useRef, Dispatch, SetStateAction } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
+import { useLanguage } from "@/context/LanguageContext";
 
 type Position = {
   left: number;
@@ -15,6 +16,7 @@ export const AboutUsDropdown = ({
 }: {
   setPosition: Dispatch<SetStateAction<Position>>;
 }) => {
+  const { language } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
   const [activeItem, setActiveItem] = useState<string | null>(null);
   const ref = useRef<null | HTMLLIElement>(null);
@@ -22,24 +24,24 @@ export const AboutUsDropdown = ({
   const menuItems = [
     {
       id: "who-we-are",
-      name: "Who we are",
+      name: language === 'en' ? "Who we are" : "من نحن",
       href: "/About-us",
     },
     {
       id: "partners",
-      name: "Our Partners",
+      name: language === 'en' ? "Our Partners" : "شركاؤنا",
       hasSubLinks: false,
       href: "/partners",
     },
     {
       id: "Palestinian-IT-leads",
-      name: "Palestinian IT leads",
+      name: language === 'en' ? "Palestinian IT leads" : "قادة تكنولوجيا المعلومات الفلسطينيون",
       hasSubLinks: false,
       href: "/Palestinian-IT-leads",
     },
     {
       id: "work-with-us",
-      name: "Work with us",
+      name: language === 'en' ? "Work with us" : "اعمل معنا",
       href: "/work-with-us",
     },
   ];
@@ -63,7 +65,7 @@ export const AboutUsDropdown = ({
       }}
       className="relative z-10 block cursor-pointer px-3 py-1.5 text-base font-medium text-[#1b316e] transition-colors hover:text-white"
     >
-      About Us
+      {language === 'en' ? 'About Us' : 'من نحن'}
       <AnimatePresence>
         {isOpen && (
           <motion.div

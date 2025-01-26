@@ -7,6 +7,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Button } from "@/components/ui/button"
 import { ComplaintDescriptionData } from "@/types/form-types"
 import { toast } from "@/hooks/use-toast"
+import { useLanguage } from "@/context/LanguageContext"
 
 export interface ComplaintDescriptionProps {
   onNext: (data: ComplaintDescriptionData) => void;
@@ -15,6 +16,7 @@ export interface ComplaintDescriptionProps {
 }
 
 export function ComplaintDescription({ onNext, onPrevious, data }: ComplaintDescriptionProps) {
+  const { language } = useLanguage();
   const [formData, setFormData] = useState<ComplaintDescriptionData>({
     description: data?.description || "",
     entity: data?.entity || "",
@@ -24,16 +26,16 @@ export function ComplaintDescription({ onNext, onPrevious, data }: ComplaintDesc
   const validateForm = () => {
     if (!formData.description.trim()) {
       toast({
-        title: "Error",
-        description: "Description of the complaint is required",
+        title: language === 'en' ? "Error" : "خطأ",
+        description: language === 'en' ? "Description of the complaint is required" : "وصف الشكوى مطلوب",
         variant: "destructive",
       });
       return false;
     }
     if (!formData.entity.trim()) {
       toast({
-        title: "Error",
-        description: "Entity against which the complaint is filed is required",
+        title: language === 'en' ? "Error" : "خطأ",
+        description: language === 'en' ? "Entity against which the complaint is filed is required" : "الجهة المقدم ضدها الشكوى مطلوبة",
         variant: "destructive",
       });
       return false;
@@ -50,7 +52,7 @@ export function ComplaintDescription({ onNext, onPrevious, data }: ComplaintDesc
   return (
     <motion.form onSubmit={handleSubmit} className="space-y-6">
       <div className="space-y-2">
-        <Label htmlFor="description">Description of the Complaint</Label>
+        <Label htmlFor="description">{language === 'en' ? 'Description of the Complaint' : 'وصف الشكوى'}</Label>
         <Textarea
           id="description"
           rows={4}
@@ -61,7 +63,7 @@ export function ComplaintDescription({ onNext, onPrevious, data }: ComplaintDesc
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="entity">The entity against which the complaint is filed</Label>
+        <Label htmlFor="entity">{language === 'en' ? 'The entity against which the complaint is filed' : 'الجهة المقدم ضدها الشكوى'}</Label>
         <Input
           id="entity"
           value={formData.entity}
@@ -71,7 +73,7 @@ export function ComplaintDescription({ onNext, onPrevious, data }: ComplaintDesc
       </div>
 
       <div>
-        <Label>Was this complaint filed in a court of law?</Label>
+        <Label>{language === 'en' ? 'Was this complaint filed in a court of law?' : 'هل تم تقديم هذه الشكوى في المحكمة؟'}</Label>
         <RadioGroup
           defaultValue={formData.filedInCourt.toString()}
           onValueChange={(value) => setFormData({ ...formData, filedInCourt: value === "true" })}
@@ -79,18 +81,18 @@ export function ComplaintDescription({ onNext, onPrevious, data }: ComplaintDesc
         >
           <div className="flex items-center space-x-2">
             <RadioGroupItem value="true" id="filedInCourtYes" />
-            <Label htmlFor="filedInCourtYes">Yes</Label>
+            <Label htmlFor="filedInCourtYes">{language === 'en' ? 'Yes' : 'نعم'}</Label>
           </div>
           <div className="flex items-center space-x-2">
             <RadioGroupItem value="false" id="filedInCourtNo" />
-            <Label htmlFor="filedInCourtNo">No</Label>
+            <Label htmlFor="filedInCourtNo">{language === 'en' ? 'No' : 'لا'}</Label>
           </div>
         </RadioGroup>
       </div>
 
       <div className="flex justify-between">
-        <Button type="button" onClick={onPrevious} variant="outline">Previous</Button>
-        <Button type="submit">Next</Button>
+        <Button type="button" onClick={onPrevious} variant="outline">{language === 'en' ? 'Previous' : 'السابق'}</Button>
+        <Button type="submit">{language === 'en' ? 'Next' : 'التالي'}</Button>
       </div>
     </motion.form>
   )

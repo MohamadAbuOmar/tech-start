@@ -4,35 +4,19 @@ import Image from "next/image";
 import React, { useEffect, useRef } from "react";
 import { motion, useAnimation, useInView } from "framer-motion";
 import { WordPullUpDemo } from "../../ui/FoucursTitle";
+import { LocalizedFocusArea } from "@/app/actions/pages/focus-area";
 
-const services = [
-  {
-    icon: "/images/S6.png",
-    title: "Improving IT Service Capabilities",
-    description:
-      "Take your business to the next level with our web design and development services",
-  },
-  {
-    icon: "/images/S1.png",
-    title: "Improving Market Access and Increasing Demand and Investments",
-    description:
-      "Get your website to the top of search engine results with our SEO services",
-  },
-  {
-    icon: "/images/S5.png",
-    title: "Improving IT Services Ecosystem",
-    description:
-      "Boost your brand's online presence with our social media marketing services",
-  },
-];
-
-const ServiceCard = ({
-  service,
-  index,
-}: {
-  service: { icon: string; title: string; description: string };
+interface ServiceCardProps {
+  service: {
+    id: string;
+    title: string;
+    description: string;
+    imageUrl: string;
+  };
   index: number;
-}) => {
+}
+
+const ServiceCard = ({ service, index }: ServiceCardProps) => {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true });
   const controls = useAnimation();
@@ -62,7 +46,7 @@ const ServiceCard = ({
       <div className="absolute inset-0 bg-grid-pattern opacity-10"></div>
       <div className="absolute inset-0 bg-dot-pattern opacity-10"></div>
       <Image
-        src={service.icon}
+        src={service.imageUrl}
         width={1200}
         height={1400}
         className="object-contain mx-auto w-40 h-40 mb-4 transition-transform duration-300 group-hover:scale-110"
@@ -77,7 +61,11 @@ const ServiceCard = ({
   );
 };
 
-export default function FoucesArea() {
+interface FoucesAreaProps {
+  focusAreasData: LocalizedFocusArea[];
+}
+
+export default function FoucesArea({ focusAreasData }: FoucesAreaProps) {
   return (
     <div className="relative py-24 mb-[5rem] px-6 overflow-hidden">
       <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
@@ -97,8 +85,17 @@ export default function FoucesArea() {
         </motion.div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-16">
-          {services.map((service, index) => (
-            <ServiceCard key={service.title} service={service} index={index} />
+          {focusAreasData.map((area, index) => (
+            <ServiceCard 
+              key={area.id} 
+              service={{
+                id: area.id,
+                title: area.title,
+                description: area.description,
+                imageUrl: area.cards[0]?.imageUrl || "/images/default-focus.png"
+              }} 
+              index={index} 
+            />
           ))}
         </div>
       </div>

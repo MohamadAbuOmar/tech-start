@@ -7,6 +7,7 @@ import { ProgramsDropdown } from "./ProgramsDropdown";
 import { AboutUsDropdown } from "./AboutUsDropdown";
 import { ContactUsDropdown } from "./ContactUsDropdown";
 import { MediaCenterDropdown } from "./MediaCenterDropdown";
+import { useLanguage } from "@/context/LanguageContext";
 
 type Position = {
   left: number;
@@ -15,6 +16,7 @@ type Position = {
 };
 
 export const SlideTabs = () => {
+  const { language } = useLanguage();
   const [position, setPosition] = useState<Position>({
     left: 0,
     width: 0,
@@ -35,7 +37,7 @@ export const SlideTabs = () => {
       <ProgramsDropdown setPosition={setPosition} />
       <MediaCenterDropdown setPosition={setPosition} />
       <Link href="/Safeguards">
-        <Tab setPosition={setPosition}>Safeguards</Tab>
+        <Tab setPosition={setPosition}>{language === 'en' ? 'Safeguards' : 'الضمانات'}</Tab>
       </Link>
       <ContactUsDropdown setPosition={setPosition} />
 

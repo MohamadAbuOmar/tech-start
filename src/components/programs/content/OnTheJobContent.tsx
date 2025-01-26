@@ -3,8 +3,29 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
+import { useLanguage } from "@/context/LanguageContext"
 
-export function OnTheJobContent() {
+interface OnTheJobContentProps {
+  data: {
+    title: string;
+    description: string;
+    overview: {
+      duration: string[];
+      training: string[];
+    };
+    requirements: {
+      company: string[];
+      trainee: string[];
+    };
+    buttons: {
+      guidelines: string;
+      apply: string;
+    };
+  };
+}
+
+export function OnTheJobContent({ data }: OnTheJobContentProps) {
+  const { language } = useLanguage();
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -13,12 +34,12 @@ export function OnTheJobContent() {
     >
       <Card className="overflow-hidden">
         <CardHeader className="bg-primary text-primary-foreground p-6">
-          <CardTitle className="text-3xl font-bold">On-the-Job Training Stipend Grant</CardTitle>
+          <CardTitle className="text-3xl font-bold">{data.title}</CardTitle>
         </CardHeader>
         <CardContent className="p-6 space-y-6">
           <div className="bg-gray-50 p-4 rounded-lg">
             <p className="text-gray-700 leading-relaxed">
-              Supports new IT staff gaining knowledge in advanced services, specifically for projects with international buyers. Requires a signed employment contract and letter of intent from international buyers.
+              {data.description}
             </p>
           </div>
 
@@ -27,25 +48,26 @@ export function OnTheJobContent() {
               <CardHeader>
                 <CardTitle className="text-xl font-semibold text-primary flex items-center gap-2">
                   <Badge variant="outline" className="text-sm font-normal">
-                    Overview
+                    {language === 'en' ? 'Overview' : 'نظرة عامة'}
                   </Badge>
-                  Key Features
+                  {language === 'en' ? 'Key Features' : 'الميزات الرئيسية'}
                 </CardTitle>
               </CardHeader>
               <CardContent className="grid gap-4 md:grid-cols-2">
                 <div>
-                  <h4 className="font-semibold text-gray-900 mb-2">Duration and Requirements</h4>
+                  <h4 className="font-semibold text-gray-900 mb-2">{language === 'en' ? 'Duration and Requirements' : 'المدة والمتطلبات'}</h4>
                   <ul className="list-disc pl-6 space-y-2 text-gray-700">
-                    <li>Maximum duration: 1 year</li>
-                    <li>Requires international buyer approval</li>
-                    <li>Full-time employment contract required</li>
+                    {data.overview.duration.map((item, index) => (
+                      <li key={index}>{item}</li>
+                    ))}
                   </ul>
                 </div>
                 <div>
-                  <h4 className="font-semibold text-gray-900 mb-2">Training and Costs</h4>
+                  <h4 className="font-semibold text-gray-900 mb-2">{language === 'en' ? 'Training and Costs' : 'التدريب والتكاليف'}</h4>
                   <ul className="list-disc pl-6 space-y-2 text-gray-700">
-                    <li>Practical training and mentoring provided</li>
-                    <li>Companies cover overhead costs</li>
+                    {data.overview.training.map((item, index) => (
+                      <li key={index}>{item}</li>
+                    ))}
                   </ul>
                 </div>
               </CardContent>
@@ -56,18 +78,16 @@ export function OnTheJobContent() {
                 <CardHeader>
                   <CardTitle className="text-xl font-semibold text-primary flex items-center gap-2">
                     <Badge variant="outline" className="text-sm font-normal">
-                      Requirements
+                      {language === 'en' ? 'Requirements' : 'المتطلبات'}
                     </Badge>
-                    Company Criteria
+                    {language === 'en' ? 'Company Criteria' : 'معايير الشركة'}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <ul className="list-disc pl-6 space-y-2 text-gray-700">
-                    <li>Growth potential evidence</li>
-                    <li>Letter of Intent from international client</li>
-                    <li>Detailed training plan</li>
-                    <li>Resource commitment details</li>
-                    <li>Business case for workforce stipend</li>
+                    {data.requirements.company.map((requirement, index) => (
+                      <li key={index}>{requirement}</li>
+                    ))}
                   </ul>
                 </CardContent>
               </Card>
@@ -76,18 +96,16 @@ export function OnTheJobContent() {
                 <CardHeader>
                   <CardTitle className="text-xl font-semibold text-primary flex items-center gap-2">
                     <Badge variant="outline" className="text-sm font-normal">
-                      Eligibility
+                      {language === 'en' ? 'Eligibility' : 'الأهلية'}
                     </Badge>
-                    Trainee Criteria
+                    {language === 'en' ? 'Trainee Criteria' : 'معايير المتدرب'}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <ul className="list-disc pl-6 space-y-2 text-gray-700">
-                    <li>IT/STEM degree or certification</li>
-                    <li>No current full-time employment</li>
-                    <li>New/advanced technology training</li>
-                    <li>No previous grant funding</li>
-                    <li>No family relations restriction</li>
+                    {data.requirements.trainee.map((requirement, index) => (
+                      <li key={index}>{requirement}</li>
+                    ))}
                   </ul>
                 </CardContent>
               </Card>
@@ -96,10 +114,10 @@ export function OnTheJobContent() {
 
           <div className="flex gap-4 justify-center">
             <Button asChild variant="outline">
-              <Link href="#">View Guidelines</Link>
+              <Link href="#">{data.buttons.guidelines}</Link>
             </Button>
             <Button asChild>
-              <Link href="#">Apply Now</Link>
+              <Link href="#">{data.buttons.apply}</Link>
             </Button>
           </div>
         </CardContent>

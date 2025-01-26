@@ -8,9 +8,34 @@ import { StudentInternshipContent } from './content/StudentInternshipContent'
 import { TrainToHireContent } from './content/TrainToHireContent'
 import { OnTheJobContent } from './content/OnTheJobContent'
 import { ExpatriateContent } from './content/ExpatriateContent'
-import FAQsPage from '@/app/(Front)/FAQs/page'
+import { useLanguage } from "@/context/LanguageContext"
+import { FAQSectionClient } from "@/components/faq-section/faq-section-client"
 
-export default function GrantTabs({ defaultTab = "overview" }) {
+interface GrantTabsProps {
+  data: {
+    overview: Record<string, string>;
+    student: Record<string, string>;
+    trainToHire: Record<string, string>;
+    onTheJob: Record<string, string>;
+    expatriate: Record<string, string>;
+    faq: {
+      id: string;
+      name: string;
+      slug: string;
+      order: number;
+      faqs: Array<{
+        id: string;
+        question: string;
+        answer: string;
+        order: number;
+      }>;
+    }[];
+  };
+  defaultTab?: string;
+}
+
+export default function GrantTabs({ defaultTab = "overview" }: Omit<GrantTabsProps, 'data'>) {
+  const { language } = useLanguage();
     const [activeTab, setActiveTab] = React.useState(defaultTab)
 
     React.useEffect(() => {
@@ -29,12 +54,12 @@ export default function GrantTabs({ defaultTab = "overview" }) {
     }, [])
 
     const tabs = [
-        { value: "overview", label: "Overview" },
-        { value: "student", label: "Student Internship" },
-        { value: "train-to-hire", label: "Train-to-hire" },
-        { value: "on-the-job", label: "On-the-job Training" },
-        { value: "expatriate", label: "Expatriate and Diaspora" },
-        { value: "faq", label: "FAQ" },
+        { value: "overview", label: language === 'en' ? "Overview" : "نظرة عامة" },
+        { value: "student", label: language === 'en' ? "Student Internship" : "تدريب الطلاب" },
+        { value: "train-to-hire", label: language === 'en' ? "Train-to-hire" : "التدريب للتوظيف" },
+        { value: "on-the-job", label: language === 'en' ? "On-the-job Training" : "التدريب أثناء العمل" },
+        { value: "expatriate", label: language === 'en' ? "Expatriate and Diaspora" : "المغتربون والشتات" },
+        { value: "faq", label: language === 'en' ? "FAQ" : "الأسئلة الشائعة" },
     ]
 
     return (
@@ -79,7 +104,7 @@ export default function GrantTabs({ defaultTab = "overview" }) {
                             <ExpatriateContent />
                         </TabsContent>
                         <TabsContent value="faq">
-                            <FAQsPage />
+                            <FAQSectionClient categories={data?.faq || []} />
                         </TabsContent>
                     </div>
                 </Tabs>

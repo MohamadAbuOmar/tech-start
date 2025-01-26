@@ -2,6 +2,7 @@
 "use client"
 
 import { useState } from "react"
+import dynamic from "next/dynamic"
 import { motion } from "framer-motion"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -11,10 +12,11 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Facebook, Instagram, Linkedin, Twitter, MapPin, Phone, Mail, Send } from "lucide-react"
-import Lottie from "lottie-react"
 import ContactSvg from "../../../public/svg/Contact.json";
 import { submitContactForm } from "@/app/actions/pages/contact-actions"
 import { useToast } from "@/hooks/use-toast"
+
+const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
 
 const fadeIn = {
   hidden: { opacity: 0, y: 20 },

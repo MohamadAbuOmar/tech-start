@@ -2,17 +2,30 @@
 
 import ReusableHero from "./reusable-hero";
 
-export default function UpskillHero() {
+interface UpskillHeroProps {
+  data: {
+    badge: string;
+    title: string;
+    highlightedWord: string;
+    description: string;
+    primaryButtonText: string;
+    secondaryButtonText: string;
+    imageSrc: string;
+    imageAlt: string;
+  };
+}
+
+export default function UpskillHero({ data }: UpskillHeroProps) {
   return (
     <ReusableHero
-      badge="Programs"
-      title="Empowering IT firms with"
-      highlightedWord="UPSKILL"
-      description="The Upskill Program focuses on helping IT firms upskill their workforce to scale up their business, increase growth opportunities, and attract new local and international clients."
-      primaryButtonText="Apply Now"
-      secondaryButtonText="Learn More"
-      imageSrc="/images/UpskillHero.png"
-      imageAlt="UPSKILL Program Illustration"
+      badge={data.badge}
+      title={data.title}
+      highlightedWord={data.highlightedWord}
+      description={data.description}
+      primaryButtonText={data.primaryButtonText}
+      secondaryButtonText={data.secondaryButtonText}
+      imageSrc={data.imageSrc}
+      imageAlt={data.imageAlt}
       features={[
         {
           icon: (
