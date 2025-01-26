@@ -3,8 +3,33 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
+import { useLanguage } from "@/context/LanguageContext"
 
-export function HRServiceContent() {
+interface HRServiceContentProps {
+  data: {
+    title: string;
+    description: string;
+    capabilities: string[];
+    requirements: string[];
+    funding: {
+      standard: {
+        title: string;
+        description: string;
+      };
+      special: {
+        title: string;
+        description: string;
+      };
+    };
+    buttons: {
+      guidelines: string;
+      apply: string;
+    };
+  };
+}
+
+export function HRServiceContent({ data }: HRServiceContentProps) {
+  const { language } = useLanguage();
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -13,14 +38,12 @@ export function HRServiceContent() {
     >
       <Card className="overflow-hidden">
         <CardHeader className="bg-primary text-primary-foreground p-6">
-          <CardTitle className="text-3xl font-bold">HR Service Providers Grant</CardTitle>
+          <CardTitle className="text-3xl font-bold">{data.title}</CardTitle>
         </CardHeader>
         <CardContent className="p-6 space-y-8">
           <div className="bg-gray-50 p-6 rounded-lg">
             <p className="text-lg text-gray-700 leading-relaxed">
-              Enables the launch of new HR providers specializing in IT sector recruitment, 
-              bringing modern recruitment practices and tools to address the challenges in 
-              finding skilled IT professionals in West Bank and Gaza.
+              {data.description}
             </p>
           </div>
 
@@ -28,16 +51,14 @@ export function HRServiceContent() {
             <Card>
               <CardHeader>
                 <CardTitle className="text-xl font-semibold text-primary">
-                  <Badge variant="outline" className="mb-2">Required Capabilities</Badge>
+                  <Badge variant="outline" className="mb-2">{language === 'en' ? 'Required Capabilities' : 'القدرات المطلوبة'}</Badge>
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <ul className="list-disc pl-6 space-y-2 text-gray-700">
-                  <li>Modern recruitment practices</li>
-                  <li>HR technology and databases</li>
-                  <li>Psychological selection tools</li>
-                  <li>Candidate management systems</li>
-                  <li>International IT recruitment experience</li>
+                  {data.capabilities.map((capability, index) => (
+                    <li key={index}>{capability}</li>
+                  ))}
                 </ul>
               </CardContent>
             </Card>
@@ -45,16 +66,14 @@ export function HRServiceContent() {
             <Card>
               <CardHeader>
                 <CardTitle className="text-xl font-semibold text-primary">
-                  <Badge variant="outline" className="mb-2">Business Requirements</Badge>
+                  <Badge variant="outline" className="mb-2">{language === 'en' ? 'Business Requirements' : 'متطلبات العمل'}</Badge>
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <ul className="list-disc pl-6 space-y-2 text-gray-700">
-                  <li>Local registration/partnership</li>
-                  <li>Sustainable business model</li>
-                  <li>Proven track record</li>
-                  <li>Independent operation capability</li>
-                  <li>Market-based approach</li>
+                  {data.requirements.map((requirement, index) => (
+                    <li key={index}>{requirement}</li>
+                  ))}
                 </ul>
               </CardContent>
             </Card>
@@ -63,18 +82,18 @@ export function HRServiceContent() {
           <Card>
             <CardHeader>
               <CardTitle className="text-xl font-semibold text-primary">
-                <Badge variant="outline" className="mb-2">Funding Structure</Badge>
+                <Badge variant="outline" className="mb-2">{language === 'en' ? 'Funding Structure' : 'هيكل التمويل'}</Badge>
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="grid gap-4 md:grid-cols-2">
                 <div className="bg-blue-50 p-4 rounded-lg">
-                  <h4 className="font-semibold mb-2">Standard Funding</h4>
-                  <p className="text-blue-700">50/50 co-funding basis</p>
+                  <h4 className="font-semibold mb-2">{data.funding.standard.title}</h4>
+                  <p className="text-blue-700">{data.funding.standard.description}</p>
                 </div>
                 <div className="bg-purple-50 p-4 rounded-lg">
-                  <h4 className="font-semibold mb-2">Women-Led Businesses</h4>
-                  <p className="text-purple-700">70/30 split in favor of the business</p>
+                  <h4 className="font-semibold mb-2">{data.funding.special.title}</h4>
+                  <p className="text-purple-700">{data.funding.special.description}</p>
                 </div>
               </div>
             </CardContent>
@@ -82,10 +101,10 @@ export function HRServiceContent() {
 
           <div className="flex gap-4 justify-center">
             <Button asChild variant="outline">
-              <Link href="#">View Guidelines</Link>
+              <Link href="#">{data.buttons.guidelines}</Link>
             </Button>
             <Button asChild>
-              <Link href="#">Apply Now</Link>
+              <Link href="#">{data.buttons.apply}</Link>
             </Button>
           </div>
         </CardContent>

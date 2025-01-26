@@ -1,6 +1,5 @@
 'use server'
 
-// Set runtime to nodejs to avoid edge runtime issues
 import db from '@/app/db/db'
 import { revalidatePath } from 'next/cache'
 import { cache } from 'react'

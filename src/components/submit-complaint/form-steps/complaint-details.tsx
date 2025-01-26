@@ -4,6 +4,7 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
 import { toast } from "@/hooks/use-toast"
+import { useLanguage } from "@/context/LanguageContext"
 
 interface ComplaintDetailsData {
   facts: string
@@ -16,6 +17,7 @@ interface ComplaintDetailsProps {
 }
 
 export function ComplaintDetails({ onNext, onPrevious, data }: ComplaintDetailsProps) {
+  const { language } = useLanguage();
   const [formData, setFormData] = useState<ComplaintDetailsData>({
     facts: data?.facts || "",
   })
@@ -23,8 +25,8 @@ export function ComplaintDetails({ onNext, onPrevious, data }: ComplaintDetailsP
   const validateForm = () => {
     if (!formData.facts.trim()) {
       toast({
-        title: "Error",
-        description: "Facts and grounds of the complaint are required",
+        title: language === 'en' ? "Error" : "خطأ",
+        description: language === 'en' ? "Facts and grounds of the complaint are required" : "الحقائق وأسباب الشكوى مطلوبة",
         variant: "destructive",
       });
       return false;
@@ -41,7 +43,7 @@ export function ComplaintDetails({ onNext, onPrevious, data }: ComplaintDetailsP
   return (
     <motion.form onSubmit={handleSubmit} className="space-y-6">
       <div className="space-y-2">
-        <Label htmlFor="facts">Facts and grounds of the complaint</Label>
+        <Label htmlFor="facts">{language === 'en' ? 'Facts and grounds of the complaint' : 'الحقائق وأسباب الشكوى'}</Label>
         <Textarea
           id="facts"
           rows={6}
@@ -52,8 +54,8 @@ export function ComplaintDetails({ onNext, onPrevious, data }: ComplaintDetailsP
       </div>
 
       <div className="flex justify-between">
-        <Button type="button" onClick={onPrevious} variant="outline">Previous</Button>
-        <Button type="submit">Next</Button>
+        <Button type="button" onClick={onPrevious} variant="outline">{language === 'en' ? 'Previous' : 'السابق'}</Button>
+        <Button type="submit">{language === 'en' ? 'Next' : 'التالي'}</Button>
       </div>
     </motion.form>
   )

@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { useLanguage } from "@/context/LanguageContext"
 import { ComplainantInfo } from "./form-steps/complainant-info"
 import { ComplaintDescription } from "./form-steps/complaint-description"
 import { PreviousComplaints } from "./form-steps/previous-complaints"
@@ -23,6 +24,7 @@ const steps = [
 ]
 
 export function ComplaintForm() {
+  const { language } = useLanguage()
   const [currentStep, setCurrentStep] = useState(0)
   const [formData, setFormData] = useState<FormDataType>({})
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -55,8 +57,10 @@ export function ComplaintForm() {
       const result = await response.json()
       if (result.success) {
         toast({
-          title: "Complaint Submitted",
-          description: `Your complaint has been successfully submitted. Complaint number: ${result.complaintNumber}`,
+          title: language === 'en' ? "Complaint Submitted" : "تم تقديم الشكوى",
+          description: language === 'en' 
+            ? `Your complaint has been successfully submitted. Complaint number: ${result.complaintNumber}`
+            : `تم تقديم شكواك بنجاح. رقم الشكوى: ${result.complaintNumber}`,
         })
         // Reset form or redirect to a success page
         setFormData({})
@@ -67,8 +71,10 @@ export function ComplaintForm() {
     } catch (error) {
       console.error("Error submitting complaint:", error)
       toast({
-        title: "Error",
-        description: "Failed to submit complaint. Please try again.",
+        title: language === 'en' ? "Error" : "خطأ",
+        description: language === 'en' 
+          ? "Failed to submit complaint. Please try again."
+          : "فشل في تقديم الشكوى. يرجى المحاولة مرة أخرى.",
         variant: "destructive",
       })
     } finally {
@@ -86,8 +92,8 @@ export function ComplaintForm() {
         <div className="p-8">
           <Tabs defaultValue="regular" className="w-full">
             <TabsList className="grid w-full grid-cols-2 mb-8">
-              <TabsTrigger value="regular">Regular Complaint</TabsTrigger>
-              <TabsTrigger value="anonymous">Anonymous Complaint</TabsTrigger>
+              <TabsTrigger value="regular">{language === 'en' ? 'Regular Complaint' : 'شكوى عادية'}</TabsTrigger>
+              <TabsTrigger value="anonymous">{language === 'en' ? 'Anonymous Complaint' : 'شكوى مجهولة'}</TabsTrigger>
             </TabsList>
 
             <TabsContent value="regular">

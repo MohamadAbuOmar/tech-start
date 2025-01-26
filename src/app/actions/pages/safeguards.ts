@@ -1,6 +1,5 @@
 "use server";
 
-// Set runtime to nodejs to avoid edge runtime issues
 import { cache } from "react";
 import db from "@/app/db/db";
 import { ApiResponse } from "@/types/api";

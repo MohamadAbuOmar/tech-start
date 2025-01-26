@@ -24,24 +24,24 @@ export const AboutUsDropdown = ({
   const menuItems = [
     {
       id: "who-we-are",
-      name: "Who we are",
+      name: language === 'en' ? "Who we are" : "من نحن",
       href: "/About-us",
     },
     {
       id: "partners",
-      name: "Our Partners",
+      name: language === 'en' ? "Our Partners" : "شركاؤنا",
       hasSubLinks: false,
       href: "/partners",
     },
     {
       id: "Palestinian-IT-leads",
-      name: "Palestinian IT leads",
+      name: language === 'en' ? "Palestinian IT leads" : "قادة تكنولوجيا المعلومات الفلسطينيون",
       hasSubLinks: false,
       href: "/Palestinian-IT-leads",
     },
     {
       id: "work-with-us",
-      name: "Work with us",
+      name: language === 'en' ? "Work with us" : "اعمل معنا",
       href: "/work-with-us",
     },
   ];

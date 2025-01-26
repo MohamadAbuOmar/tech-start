@@ -23,17 +23,17 @@ export const ContactUsDropdown = ({
   const menuItems = [
     {
       id: "contact-us",
-      name: "Contact Us",
+      name: language === 'en' ? "Contact Us" : "اتصل بنا",
       href: "/Contact-us",
     },
     {
       id: "complaints",
-      name: "Complaints",
+      name: language === 'en' ? "Complaints" : "الشكاوى",
       href: "/submit-complaint",
     },
     {
       id: "faqs",
-      name: "FAQs",
+      name: language === 'en' ? "FAQs" : "الأسئلة الشائعة",
       href: "/FAQs",
     },
   ];

@@ -87,6 +87,7 @@ const Clients = () => {
                     src="/Clients/mtde.png"
                     alt="MTDE"
                     fill
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 200px"
                     className="object-contain"
                     priority
                   />
@@ -109,6 +110,7 @@ const Clients = () => {
                         src={client.src}
                         alt={client.alt}
                         fill
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 150px"
                         className="object-contain"
                         priority={index < 2}
                       />
@@ -131,6 +133,7 @@ const Clients = () => {
                     src="/Clients/DAI.png"
                     alt="DAI"
                     fill
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 200px"
                     className="object-contain"
                     priority
                   />

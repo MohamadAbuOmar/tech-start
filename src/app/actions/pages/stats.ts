@@ -1,6 +1,5 @@
 "use server";
 
-// Set runtime to nodejs to avoid edge runtime issues
 import { cache } from "react";
 import db from "@/app/db/db";
 import { ApiResponse } from "@/types/api";
@@ -14,7 +13,15 @@ export interface LocalizedStat {
 
 export const getStats = cache(async (language: 'en' | 'ar' = 'en'): Promise<ApiResponse<LocalizedStat[]>> => {
   try {
-    const stats = await db.stat.findMany();
+    const stats = await db.stat.findMany({
+      select: {
+        id: true,
+        name_en: true,
+        name_ar: true,
+        value: true,
+        icon: true
+      }
+    });
 
     const localizedStats = stats.map(stat => ({
       id: stat.id,

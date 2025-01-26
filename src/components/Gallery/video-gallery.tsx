@@ -8,6 +8,8 @@ import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight, X, Calendar, Play } from 'lucide-react';
 import { GalleryFilters } from "./GalleryFilters";
 
+import { useLanguage } from "@/context/LanguageContext";
+
 interface Video {
   src: string;
   title: string;
@@ -21,55 +23,17 @@ interface Event {
   videos: Video[];
 }
 
-const events: Event[] = [
-  {
-    id: 'event1',
-    name: 'Gaza Tech and Innovative Recovery',
-    date: '2023-05-15',
-    videos: [
-      { src: "https://www.example.com/video1.mp4", title: "Opening Ceremony", thumbnail: "https://www.techstart.ps//public/files/resized/490x245/galleries/1366x768/3-1634469578.jpg" },
-      { src: "https://www.example.com/video2.mp4", title: "Panel Discussion", thumbnail: "https://www.techstart.ps//public/files/resized/490x245/galleries/1366x768/1-1634469590.jpg" },
-      { src: "https://www.example.com/video3.mp4", title: "Networking Session", thumbnail: "https://www.techstart.ps//public/files/resized/490x245/galleries/1366x768/6-1634469601.jpg" },
-    ]
-  },
-  {
-    id: 'event2',
-    name: 'TechStart Presentation Event',
-    date: '2023-06-20',
-    videos: [
-      { src: "https://www.example.com/video4.mp4", title: "Keynote Speaker", thumbnail: "https://www.techstart.ps//public/files/resized/490x245/galleries/1366x768/14-1669299686.jpg" },
-      { src: "https://www.example.com/video5.mp4", title: "Q&A Session", thumbnail: "https://www.techstart.ps//public/files/resized/490x245/galleries/1366x768/13-1669299686.jpg" },
-      { src: "https://www.example.com/video6.mp4", title: "Product Demo", thumbnail: "https://www.techstart.ps//public/files/resized/490x245/galleries/1366x768/12-1669299685.jpg" },
-    ]
-  },
-  {
-    id: 'event3',
-    name: 'TechStart Meet & Greet event',
-    date: '2023-07-10',
-    videos: [
-      { src: "https://www.example.com/video7.mp4", title: "Welcome Reception", thumbnail: "https://www.techstart.ps//public/files/resized/490x245/galleries/1366x768/8-1679836859.jpg" },
-      { src: "https://www.example.com/video8.mp4", title: "Group Discussion", thumbnail: "https://www.techstart.ps//public/files/resized/490x245/galleries/1366x768/1-1679836857.jpg" },
-      { src: "https://www.example.com/video9.mp4", title: "Mentorship Session", thumbnail: "https://www.techstart.ps//public/files/resized/490x245/galleries/1366x768/5-1679836857.jpg" },
-    ]
-  },
-  {
-    id: 'event4',
-    name: 'TechStart Job Fair at An-Najah University',
-    date: '2023-08-05',
-    videos: [
-      { src: "https://www.example.com/video10.mp4", title: "Company Booths", thumbnail: "https://www.techstart.ps//public/files/resized/490x245/galleries/1366x768/15-1688625991.JPG" },
-      { src: "https://www.example.com/video11.mp4", title: "Resume Workshop", thumbnail: "https://www.techstart.ps//public/files/resized/490x245/galleries/1366x768/14-1688625991.JPG" },
-      { src: "https://www.example.com/video12.mp4", title: "Interview Practice", thumbnail: "https://www.techstart.ps//public/files/resized/490x245/galleries/1366x768/13-1688625990.JPG" },
-    ]
-  },
-];
+interface VideoGalleryProps {
+  videos: Event[];
+  className?: string;
+}
 
 export const VideoGallery = ({
+  videos,
   className,
-}: {
-  className?: string;
-}) => {
-  const [filteredEvents, setFilteredEvents] = useState(events);
+}: VideoGalleryProps) => {
+  const { language } = useLanguage();
+  const [filteredEvents, setFilteredEvents] = useState(videos);
   const [searchTerm, setSearchTerm] = useState('');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
@@ -77,7 +41,7 @@ export const VideoGallery = ({
   const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
-    const filtered = events.filter(event => 
+    const filtered = videos.filter(event => 
       event.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
     const sorted = [...filtered].sort((a, b) => {
@@ -88,7 +52,7 @@ export const VideoGallery = ({
       }
     });
     setFilteredEvents(sorted);
-  }, [searchTerm, sortOrder]);
+  }, [searchTerm, sortOrder, videos]);
 
   const nextVideo = () => {
     if (selectedEvent) {
@@ -117,7 +81,7 @@ export const VideoGallery = ({
   return (
     <div className={cn("min-h-screen bg-gray-100", className)}>
        <header className="sticky top-0 z-50 bg-white shadow-sm">
-        <GalleryFilters onSearch={handleSearch} onSort={handleSort} title="TechStart Image Gallery" />
+        <GalleryFilters onSearch={handleSearch} onSort={handleSort} title={language === 'en' ? "TechStart Video Gallery" : "معرض الفيديو"} />
       </header>
 
       <main className="max-w-7xl mx-auto px-4 py-8">

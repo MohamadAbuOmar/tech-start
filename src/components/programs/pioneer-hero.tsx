@@ -2,17 +2,30 @@
 
 import ReusableHero from "./reusable-hero";
 
-export default function PioneerHero() {
+interface PioneerHeroProps {
+  data: {
+    badge: string;
+    title: string;
+    highlightedWord: string;
+    description: string;
+    primaryButtonText: string;
+    secondaryButtonText: string;
+    imageSrc: string;
+    imageAlt: string;
+  };
+}
+
+export default function PioneerHero({ data }: PioneerHeroProps) {
   return (
     <ReusableHero
-      badge="Programs"
-      title="Empowering IT firms with"
-      highlightedWord="PIONEER"
-      description="The Pioneer Program focuses on supporting IT companies and tech startups to adopt new technologies and develop innovative solutions that address market needs and opportunities."
-      primaryButtonText="Apply Now"
-      secondaryButtonText="Learn More"
-      imageSrc="/images/UpskillHero.png"
-      imageAlt="PIONEER Program Illustration"
+      badge={data.badge}
+      title={data.title}
+      highlightedWord={data.highlightedWord}
+      description={data.description}
+      primaryButtonText={data.primaryButtonText}
+      secondaryButtonText={data.secondaryButtonText}
+      imageSrc={data.imageSrc}
+      imageAlt={data.imageAlt}
       features={[
         {
           icon: (

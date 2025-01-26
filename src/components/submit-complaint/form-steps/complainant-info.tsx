@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { FormEvent } from "react"
 import { ComplainantData } from "@/types/form-types"
 import { toast } from "@/hooks/use-toast"
+import { useLanguage } from "@/context/LanguageContext"
 
 interface ComplainantInfoProps {
   onNext: (data: { complainantInfo: ComplainantData }) => void;
@@ -14,6 +15,7 @@ interface ComplainantInfoProps {
 }
 
 export function ComplainantInfo({ onNext, data }: ComplainantInfoProps) {
+  const { language } = useLanguage();
   const [complainantType, setComplainantType] = useState<'individual' | 'firm'>(data.complainantInfo?.complainantType || "individual")
   const [formData, setFormData] = useState<ComplainantData>({
     name: data.complainantInfo?.name || "",
@@ -29,24 +31,24 @@ export function ComplainantInfo({ onNext, data }: ComplainantInfoProps) {
     if (complainantType === "individual") {
       if (!formData.name?.trim()) {
         toast({
-          title: "Error",
-          description: "Name is required",
+          title: language === 'en' ? "Error" : "خطأ",
+          description: language === 'en' ? "Name is required" : "الاسم مطلوب",
           variant: "destructive",
         });
         return false;
       }
       if (!formData.phone?.trim()) {
         toast({
-          title: "Error",
-          description: "Phone number is required",
+          title: language === 'en' ? "Error" : "خطأ",
+          description: language === 'en' ? "Phone number is required" : "رقم الهاتف مطلوب",
           variant: "destructive",
         });
         return false;
       }
       if (!formData.email?.trim()) {
         toast({
-          title: "Error",
-          description: "Email is required",
+          title: language === 'en' ? "Error" : "خطأ",
+          description: language === 'en' ? "Email is required" : "البريد الإلكتروني مطلوب",
           variant: "destructive",
         });
         return false;
@@ -54,24 +56,24 @@ export function ComplainantInfo({ onNext, data }: ComplainantInfoProps) {
     } else {
       if (!formData.firmName?.trim()) {
         toast({
-          title: "Error",
-          description: "Firm name is required",
+          title: language === 'en' ? "Error" : "خطأ",
+          description: language === 'en' ? "Firm name is required" : "اسم الشركة مطلوب",
           variant: "destructive",
         });
         return false;
       }
       if (!formData.firmPhone?.trim()) {
         toast({
-          title: "Error",
-          description: "Firm phone number is required",
+          title: language === 'en' ? "Error" : "خطأ",
+          description: language === 'en' ? "Firm phone number is required" : "رقم هاتف الشركة مطلوب",
           variant: "destructive",
         });
         return false;
       }
       if (!formData.firmEmail?.trim()) {
         toast({
-          title: "Error",
-          description: "Firm email is required",
+          title: language === 'en' ? "Error" : "خطأ",
+          description: language === 'en' ? "Firm email is required" : "البريد الإلكتروني للشركة مطلوب",
           variant: "destructive",
         });
         return false;
@@ -89,7 +91,7 @@ export function ComplainantInfo({ onNext, data }: ComplainantInfoProps) {
   return (
     <motion.form onSubmit={handleSubmit} className="space-y-6">
       <div>
-        <Label>Complainant Type</Label>
+        <Label>{language === 'en' ? 'Complainant Type' : 'نوع مقدم الشكوى'}</Label>
         <RadioGroup
           defaultValue={complainantType}
           onValueChange={(value) => setComplainantType(value as 'individual' | 'firm')}
@@ -97,11 +99,11 @@ export function ComplainantInfo({ onNext, data }: ComplainantInfoProps) {
         >
           <div className="flex items-center space-x-2">
             <RadioGroupItem value="individual" id="individual" />
-            <Label htmlFor="individual">Individual</Label>
+            <Label htmlFor="individual">{language === 'en' ? 'Individual' : 'فرد'}</Label>
           </div>
           <div className="flex items-center space-x-2">
             <RadioGroupItem value="firm" id="firm" />
-            <Label htmlFor="firm">Firm</Label>
+            <Label htmlFor="firm">{language === 'en' ? 'Firm' : 'شركة'}</Label>
           </div>
         </RadioGroup>
       </div>
@@ -109,7 +111,7 @@ export function ComplainantInfo({ onNext, data }: ComplainantInfoProps) {
       {complainantType === "individual" ? (
         <>
           <div className="space-y-2">
-            <Label htmlFor="name">Name</Label>
+            <Label htmlFor="name">{language === 'en' ? 'Name' : 'الاسم'}</Label>
             <Input
               id="name"
               value={formData.name}
@@ -118,7 +120,7 @@ export function ComplainantInfo({ onNext, data }: ComplainantInfoProps) {
             />
           </div>
           <div>
-            <Label>Gender</Label>
+            <Label>{language === 'en' ? 'Gender' : 'الجنس'}</Label>
             <RadioGroup
               defaultValue={formData.gender}
               onValueChange={(value) => setFormData({ ...formData, gender: value })}
@@ -126,18 +128,18 @@ export function ComplainantInfo({ onNext, data }: ComplainantInfoProps) {
             >
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="male" id="male" />
-                <Label htmlFor="male">Male</Label>
+                <Label htmlFor="male">{language === 'en' ? 'Male' : 'ذكر'}</Label>
               </div>
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="female" id="female" />
-                <Label htmlFor="female">Female</Label>
+                <Label htmlFor="female">{language === 'en' ? 'Female' : 'أنثى'}</Label>
               </div>
             </RadioGroup>
           </div>
         </>
       ) : (
         <div className="space-y-2">
-          <Label htmlFor="firmName">Firm Name</Label>
+          <Label htmlFor="firmName">{language === 'en' ? 'Firm Name' : 'اسم الشركة'}</Label>
           <Input
             id="firmName"
             value={formData.firmName}
@@ -148,7 +150,7 @@ export function ComplainantInfo({ onNext, data }: ComplainantInfoProps) {
       )}
 
       <div className="space-y-2">
-        <Label htmlFor={complainantType === "individual" ? "phone" : "firmPhone"}>Phone Number</Label>
+        <Label htmlFor={complainantType === "individual" ? "phone" : "firmPhone"}>{language === 'en' ? 'Phone Number' : 'رقم الهاتف'}</Label>
         <Input
           id={complainantType === "individual" ? "phone" : "firmPhone"}
           type="tel"
@@ -165,7 +167,7 @@ export function ComplainantInfo({ onNext, data }: ComplainantInfoProps) {
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor={complainantType === "individual" ? "email" : "firmEmail"}>Email Address</Label>
+        <Label htmlFor={complainantType === "individual" ? "email" : "firmEmail"}>{language === 'en' ? 'Email Address' : 'البريد الإلكتروني'}</Label>
         <Input
           id={complainantType === "individual" ? "email" : "firmEmail"}
           type="email"
@@ -182,7 +184,7 @@ export function ComplainantInfo({ onNext, data }: ComplainantInfoProps) {
       </div>
 
       <div className="flex justify-end">
-        <Button type="submit">Next</Button>
+        <Button type="submit">{language === 'en' ? 'Next' : 'التالي'}</Button>
       </div>
     </motion.form>
   )

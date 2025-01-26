@@ -24,19 +24,19 @@ export const MediaCenterDropdown = ({
     const menuItems = [
         {
             id: "gallery",
-            name: "Gallery",
+            name: language === 'en' ? "Gallery" : "المعرض",
             subItems: [
-                { id: "photo-gallery", name: "Photo Gallery", href: "/media-center/gallery/photos" },
-                { id: "videos", name: "Videos", href: "/media-center/gallery/videos" },
+                { id: "photo-gallery", name: language === 'en' ? "Photo Gallery" : "معرض الصور", href: "/media-center/gallery/photos" },
+                { id: "videos", name: language === 'en' ? "Videos" : "الفيديوهات", href: "/media-center/gallery/videos" },
             ],
         },
         {
             id: "news",
-            name: "News",
+            name: language === 'en' ? "News" : "الأخبار",
             subItems: [
-                { id: "news-press", name: "News & Press Releases", href: "/media-center/news" },
-                { id: "publications", name: "Publications", href: "/media-center/news/publications" },
-                { id: "announcements", name: "Announcements", href: "/media-center/news/announcements" }
+                { id: "news-press", name: language === 'en' ? "News & Press Releases" : "الأخبار والبيانات الصحفية", href: "/media-center/news" },
+                { id: "publications", name: language === 'en' ? "Publications" : "المنشورات", href: "/media-center/news/publications" },
+                { id: "announcements", name: language === 'en' ? "Announcements" : "الإعلانات", href: "/media-center/news/announcements" }
             ],
         },
     ];

@@ -38,35 +38,35 @@ export const ProgramsDropdown = ({
   const programs: Program[] = [
     {
       id: "building-capabilities",
-      name: "Building Capabilities",
+      name: language === 'en' ? "Building Capabilities" : "بناء القدرات",
       subPrograms: [
         {
           id: "upskill",
-          name: "UPSKILL",
+          name: language === 'en' ? "UPSKILL" : "تطوير المهارات",
           href: "/programs/upskill",
           pilotPoints: [
-            { name: "Overview", href: "/programs/upskill#overview" },
-            { name: "Student Internship", href: "/programs/upskill#student" },
-            { name: "Train-to-hire", href: "/programs/upskill#train-to-hire" },
-            { name: "On-the-job Training", href: "/programs/upskill#on-the-job" },
-            { name: "Expatriate and Diaspora", href: "/programs/upskill#expatriate" },
-            { name: "FAQ", href: "/programs/upskill#faq" },
+            { name: language === 'en' ? "Overview" : "نظرة عامة", href: "/programs/upskill#overview" },
+            { name: language === 'en' ? "Student Internship" : "تدريب الطلاب", href: "/programs/upskill#student" },
+            { name: language === 'en' ? "Train-to-hire" : "التدريب للتوظيف", href: "/programs/upskill#train-to-hire" },
+            { name: language === 'en' ? "On-the-job Training" : "التدريب أثناء العمل", href: "/programs/upskill#on-the-job" },
+            { name: language === 'en' ? "Expatriate and Diaspora" : "المغتربون والشتات", href: "/programs/upskill#expatriate" },
+            { name: language === 'en' ? "FAQ" : "الأسئلة الشائعة", href: "/programs/upskill#faq" },
           ]
         },
         {
           id: "elevate",
-          name: "Elevate",
+          name: language === 'en' ? "Elevate" : "الارتقاء",
           pilotPoints: [
-            { name: "Pilot Point 1", href: "/programs/elevate/1" },
-            { name: "Pilot Point 2", href: "/programs/elevate/2" },
+            { name: language === 'en' ? "Pilot Point 1" : "النقطة التجريبية 1", href: "/programs/elevate/1" },
+            { name: language === 'en' ? "Pilot Point 2" : "النقطة التجريبية 2", href: "/programs/elevate/2" },
           ]
         },
         {
           id: "femtech",
-          name: "FemTech",
+          name: language === 'en' ? "FemTech" : "تقنية المرأة",
           pilotPoints: [
-            { name: "Pilot Point 1", href: "/programs/femtech/1" },
-            { name: "Pilot Point 2", href: "/programs/femtech/2" },
+            { name: language === 'en' ? "Pilot Point 1" : "النقطة التجريبية 1", href: "/programs/femtech/1" },
+            { name: language === 'en' ? "Pilot Point 2" : "النقطة التجريبية 2", href: "/programs/femtech/2" },
           ]
         }
       ]
@@ -77,31 +77,31 @@ export const ProgramsDropdown = ({
       subPrograms: [
         {
           id: "pioneer",
-          name: "Pioneer",
+          name: language === 'en' ? "Pioneer" : "الريادة",
           href: "/programs/pioneer",
           pilotPoints: [
-            { name: "Overview", href: "/programs/pioneer#overview" },
-            { name: "New IT Service Operations", href: "/programs/pioneer#it-service" },
-            { name: "IT Training Providers", href: "/programs/pioneer#training" },
-            { name: "HR Service Providers", href: "/programs/pioneer#hr-service" },
-            { name: "Business Infrastructure", href: "/programs/pioneer#infrastructure" },
-            { name: "FAQ", href: "/programs/pioneer#faq" },
+            { name: language === 'en' ? "Overview" : "نظرة عامة", href: "/programs/pioneer#overview" },
+            { name: language === 'en' ? "New IT Service Operations" : "عمليات خدمة تكنولوجيا المعلومات الجديدة", href: "/programs/pioneer#it-service" },
+            { name: language === 'en' ? "IT Training Providers" : "مزودي التدريب على تكنولوجيا المعلومات", href: "/programs/pioneer#training" },
+            { name: language === 'en' ? "HR Service Providers" : "مزودي خدمات الموارد البشرية", href: "/programs/pioneer#hr-service" },
+            { name: language === 'en' ? "Business Infrastructure" : "البنية التحتية للأعمال", href: "/programs/pioneer#infrastructure" },
+            { name: language === 'en' ? "FAQ" : "الأسئلة الشائعة", href: "/programs/pioneer#faq" },
           ]
         },
         {
           id: "market-access",
-          name: "Market Access",
+          name: language === 'en' ? "Market Access" : "الوصول إلى السوق",
           pilotPoints: [
-            { name: "Pilot Point 1", href: "/programs/market-access/1" },
-            { name: "Pilot Point 2", href: "/programs/market-access/2" },
+            { name: language === 'en' ? "Pilot Point 1" : "النقطة التجريبية 1", href: "/programs/market-access/1" },
+            { name: language === 'en' ? "Pilot Point 2" : "النقطة التجريبية 2", href: "/programs/market-access/2" },
           ]
         },
         {
           id: "horizon",
-          name: "Horizon",
+          name: language === 'en' ? "Horizon" : "الأفق",
           pilotPoints: [
-            { name: "Pilot Point 1", href: "/programs/horizon/1" },
-            { name: "Pilot Point 2", href: "/programs/horizon/2" },
+            { name: language === 'en' ? "Pilot Point 1" : "النقطة التجريبية 1", href: "/programs/horizon/1" },
+            { name: language === 'en' ? "Pilot Point 2" : "النقطة التجريبية 2", href: "/programs/horizon/2" },
           ]
         }
       ]

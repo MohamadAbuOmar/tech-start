@@ -3,24 +3,36 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
+import { useLanguage } from "@/context/LanguageContext"
 
-export function TrainToHireContent() {
-  const selectionCriteria = {
-    company: [
-      "Evidence of growth potential and business plan",
-      "Experienced leadership and management team",
-      "Solid training plan and scope of work",
-      "Pre-approved trainee list",
-      "Aligned with required skills/technologies"
-    ],
-    trainee: [
-      "IT/STEM degree or IT certification/diploma",
-      "No current full-time employment",
-      "Training on new/advanced technology",
-      "No previous Student Internship funding",
-      "No immediate family relation to management"
-    ]
-  }
+interface TrainToHireContentProps {
+  data: {
+    title: string;
+    description: string;
+    programDetails: string[];
+    contribution: {
+      standard: {
+        title: string;
+        description: string;
+      };
+      special: {
+        title: string;
+        description: string;
+      };
+    };
+    selectionCriteria: {
+      company: string[];
+      trainee: string[];
+    };
+    buttons: {
+      guidelines: string;
+      apply: string;
+    };
+  };
+}
+
+export function TrainToHireContent({ data }: TrainToHireContentProps) {
+  const { language } = useLanguage();
 
   return (
     <motion.div
@@ -30,13 +42,12 @@ export function TrainToHireContent() {
     >
       <Card className="overflow-hidden">
         <CardHeader className="bg-primary text-primary-foreground p-6">
-          <CardTitle className="text-3xl font-bold">Train-to-hire Stipends Grant</CardTitle>
+          <CardTitle className="text-3xl font-bold">{data.title}</CardTitle>
         </CardHeader>
         <CardContent className="p-6 space-y-8">
           <div className="bg-gray-50 p-6 rounded-lg">
             <p className="text-lg text-gray-700 leading-relaxed">
-              Available to University Graduates, IT Diploma and IT related certificates holders who need to gain 
-              practical skills in advanced IT services. Valid for six months with monthly evaluations.
+              {data.description}
             </p>
           </div>
 
@@ -44,16 +55,14 @@ export function TrainToHireContent() {
             <Card>
               <CardHeader>
                 <CardTitle className="text-xl font-semibold text-primary">
-                  <Badge variant="outline" className="mb-2">Program Details</Badge>
+                  <Badge variant="outline" className="mb-2">{language === 'en' ? 'Program Details' : 'تفاصيل البرنامج'}</Badge>
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <ul className="list-disc pl-6 space-y-2 text-gray-700">
-                  <li>Stipend up to $1,200 based on position and skills</li>
-                  <li>Six-month maximum duration</li>
-                  <li>Full-time employment contract required</li>
-                  <li>Monthly trainee evaluations</li>
-                  <li>Business/R&D activities contribution</li>
+                  {data.programDetails.map((detail, index) => (
+                    <li key={index}>{detail}</li>
+                  ))}
                 </ul>
               </CardContent>
             </Card>
@@ -61,18 +70,18 @@ export function TrainToHireContent() {
             <Card>
               <CardHeader>
                 <CardTitle className="text-xl font-semibold text-primary">
-                  <Badge variant="outline" className="mb-2">Company Contribution</Badge>
+                  <Badge variant="outline" className="mb-2">{language === 'en' ? 'Company Contribution' : 'مساهمة الشركة'}</Badge>
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
                   <div className="bg-blue-50 p-4 rounded-lg">
-                    <h4 className="font-semibold mb-2">Standard Companies</h4>
-                    <p className="text-blue-700">30% contribution to trainee remuneration</p>
+                    <h4 className="font-semibold mb-2">{data.contribution.standard.title}</h4>
+                    <p className="text-blue-700">{data.contribution.standard.description}</p>
                   </div>
                   <div className="bg-purple-50 p-4 rounded-lg">
-                    <h4 className="font-semibold mb-2">Special Categories</h4>
-                    <p className="text-purple-700">20% contribution for smaller firms, Gaza firms, female-managed firms, and women trainees</p>
+                    <h4 className="font-semibold mb-2">{data.contribution.special.title}</h4>
+                    <p className="text-purple-700">{data.contribution.special.description}</p>
                   </div>
                 </div>
               </CardContent>
@@ -82,23 +91,23 @@ export function TrainToHireContent() {
           <Card>
             <CardHeader>
               <CardTitle className="text-xl font-semibold text-primary">
-                <Badge variant="outline" className="mb-2">Selection Criteria</Badge>
+                <Badge variant="outline" className="mb-2">{language === 'en' ? 'Selection Criteria' : 'معايير الاختيار'}</Badge>
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="grid gap-6 md:grid-cols-2">
                 <div>
-                  <h4 className="font-semibold mb-3 text-primary">Company Requirements</h4>
+                  <h4 className="font-semibold mb-3 text-primary">{language === 'en' ? 'Company Requirements' : 'متطلبات الشركة'}</h4>
                   <ul className="list-disc pl-6 space-y-2 text-gray-700">
-                    {selectionCriteria.company.map((criterion, index) => (
+                    {data.selectionCriteria.company.map((criterion, index) => (
                       <li key={index}>{criterion}</li>
                     ))}
                   </ul>
                 </div>
                 <div>
-                  <h4 className="font-semibold mb-3 text-primary">Trainee Requirements</h4>
+                  <h4 className="font-semibold mb-3 text-primary">{language === 'en' ? 'Trainee Requirements' : 'متطلبات المتدرب'}</h4>
                   <ul className="list-disc pl-6 space-y-2 text-gray-700">
-                    {selectionCriteria.trainee.map((criterion, index) => (
+                    {data.selectionCriteria.trainee.map((criterion, index) => (
                       <li key={index}>{criterion}</li>
                     ))}
                   </ul>
@@ -109,10 +118,10 @@ export function TrainToHireContent() {
 
           <div className="flex gap-4 justify-center">
             <Button asChild variant="outline">
-              <Link href="#">View Guidelines</Link>
+              <Link href="#">{data.buttons.guidelines}</Link>
             </Button>
             <Button asChild>
-              <Link href="#">Apply Now</Link>
+              <Link href="#">{data.buttons.apply}</Link>
             </Button>
           </div>
         </CardContent>

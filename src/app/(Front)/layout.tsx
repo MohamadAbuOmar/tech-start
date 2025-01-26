@@ -9,6 +9,8 @@ import { LanguageProvider } from "@/context/LanguageContext";
 import { getFooter } from "@/app/actions/pages/footer";
 import { cookies } from "next/headers";
 
+export const runtime = 'nodejs';
+
 export const metadata: Metadata = {
   title: "Tech Start",
   description:
@@ -20,8 +22,8 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const cookieStore = cookies();
-  const language = cookieStore.get('preferredLanguage')?.value as 'en' | 'ar' || 'en';
+  const cookieStore = await cookies();
+  const language = (cookieStore.get('NEXT_LOCALE')?.value || 'en') as 'en' | 'ar';
   const footerResponse = await getFooter(language);
 
   if (!footerResponse.success) {
@@ -30,7 +32,7 @@ export default async function RootLayout({
   }
 
   return (
-    <LanguageProvider>
+    <LanguageProvider initialLanguage={language}>
       <LoadingProvider>
         <Preloader>
           <LenisProvider>

@@ -4,6 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { FileUpload } from "@/lib/FileUpload";
 import { AttachmentData } from "@/types/complaint";
+import { useLanguage } from "@/context/LanguageContext";
 
 interface AttachmentsProps {
   onNext: (data: { attachments: AttachmentData[] }) => void;
@@ -12,6 +13,7 @@ interface AttachmentsProps {
 }
 
 export function Attachments({ onNext, onPrevious, data }: AttachmentsProps) {
+  const { language } = useLanguage();
   const [files, setFiles] = useState<AttachmentData[]>(data.attachments || []);
 
   const handleUpload = (uploadedFiles: string[]) => {
@@ -45,9 +47,9 @@ export function Attachments({ onNext, onPrevious, data }: AttachmentsProps) {
 
           <div className="flex justify-between pt-4">
             <Button type="button" onClick={onPrevious} variant="outline">
-              Previous
+              {language === 'en' ? 'Previous' : 'السابق'}
             </Button>
-            <Button type="submit">Next</Button>
+            <Button type="submit">{language === 'en' ? 'Next' : 'التالي'}</Button>
           </div>
         </form>
       </Card>

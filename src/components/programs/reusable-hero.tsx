@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
+import { useLanguage } from "@/context/LanguageContext";
 
 interface ReusableHeroProps {
   badge: string;
@@ -31,8 +32,12 @@ export default function ReusableHero({
   imageAlt,
   features,
 }: ReusableHeroProps) {
+  const { isRTL } = useLanguage();
+  
+  // Use language context for dynamic layout
+  const containerClasses = `relative overflow-hidden bg-gradient-to-br from-pink-50 to-white ${isRTL ? 'rtl' : 'ltr'}`;
   return (
-    <div className="relative overflow-hidden bg-gradient-to-br from-pink-50 to-white">
+    <div className={containerClasses}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div>
           <div className="grid lg:grid-cols-2 gap-12 items-center">

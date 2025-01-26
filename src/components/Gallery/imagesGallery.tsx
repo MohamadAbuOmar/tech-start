@@ -8,6 +8,8 @@ import { Button } from "@/components/ui/button";
 import { GalleryFilters } from "./GalleryFilters";
 import { ChevronLeft, ChevronRight, X, Calendar } from "lucide-react";
 
+import { useLanguage } from "@/context/LanguageContext";
+
 interface Image {
   src: string;
   title: string;
@@ -20,110 +22,21 @@ interface Event {
   images: Image[];
 }
 
-const events: Event[] = [
-  {
-    id: "event1",
-    name: "Gaza Tech and Innovative Recovery",
-    date: "2023-05-15",
-    images: [
-      {
-        src: "https://www.techstart.ps//public/files/resized/490x245/galleries/1366x768/3-1634469578.jpg",
-        title: "Opening Ceremony",
-      },
-      {
-        src: "https://www.techstart.ps//public/files/resized/490x245/galleries/1366x768/1-1634469590.jpg",
-        title: "Panel Discussion",
-      },
-      {
-        src: "https://www.techstart.ps//public/files/resized/490x245/galleries/1366x768/6-1634469601.jpg",
-        title: "Networking Session",
-      },
-    ],
-  },
-  {
-    id: "event2",
-    name: "TechStart Presentation Event",
-    date: "2023-06-20",
-    images: [
-      {
-        src: "https://www.techstart.ps//public/files/resized/490x245/galleries/1366x768/14-1669299686.jpg",
-        title: "Keynote Speaker",
-      },
-      {
-        src: "https://www.techstart.ps//public/files/resized/490x245/galleries/1366x768/13-1669299686.jpg",
-        title: "Q&A Session",
-      },
-      {
-        src: "https://www.techstart.ps//public/files/resized/490x245/galleries/1366x768/12-1669299685.jpg",
-        title: "Product Demo",
-      },
-      {
-        src: "https://www.techstart.ps//public/files/resized/490x245/galleries/1366x768/10-1669299684.jpg",
-        title: "Audience Engagement",
-      },
-      {
-        src: "https://www.techstart.ps//public/files/resized/490x245/galleries/1366x768/9-1669299684.jpg",
-        title: "Closing Remarks",
-      },
-      {
-        src: "https://www.techstart.ps//public/files/resized/490x245/galleries/1366x768/3-1669299683.jpg",
-        title: "Networking Break",
-      },
-    ],
-  },
-  {
-    id: "event3",
-    name: "TechStart Meet & Greet event",
-    date: "2023-07-10",
-    images: [
-      {
-        src: "https://www.techstart.ps//public/files/resized/490x245/galleries/1366x768/8-1679836859.jpg",
-        title: "Welcome Reception",
-      },
-      {
-        src: "https://www.techstart.ps//public/files/resized/490x245/galleries/1366x768/1-1679836857.jpg",
-        title: "Group Discussion",
-      },
-      {
-        src: "https://www.techstart.ps//public/files/resized/490x245/galleries/1366x768/5-1679836857.jpg",
-        title: "Mentorship Session",
-      },
-      {
-        src: "https://www.techstart.ps//public/files/resized/490x245/galleries/1366x768/4-1679836857.jpg",
-        title: "Startup Pitches",
-      },
-    ],
-  },
-  {
-    id: "event4",
-    name: "TechStart Job Fair at An-Najah University",
-    date: "2023-08-05",
-    images: [
-      {
-        src: "https://www.techstart.ps//public/files/resized/490x245/galleries/1366x768/15-1688625991.JPG",
-        title: "Company Booths",
-      },
-      {
-        src: "https://www.techstart.ps//public/files/resized/490x245/galleries/1366x768/14-1688625991.JPG",
-        title: "Resume Workshop",
-      },
-      {
-        src: "https://www.techstart.ps//public/files/resized/490x245/galleries/1366x768/13-1688625990.JPG",
-        title: "Interview Practice",
-      },
-    ],
-  },
-];
+interface PhotoGalleryProps {
+  photos: Event[];
+  className?: string;
+}
 
-export const PhotoGallery = ({ className }: { className?: string }) => {
-  const [filteredEvents, setFilteredEvents] = useState(events);
+export const PhotoGallery = ({ photos, className }: PhotoGalleryProps) => {
+  const { language } = useLanguage();
+  const [filteredEvents, setFilteredEvents] = useState(photos);
   const [searchTerm, setSearchTerm] = useState("");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   useEffect(() => {
-    const filtered = events.filter((event) =>
+    const filtered = photos.filter((event) =>
       event.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
     const sorted = [...filtered].sort((a, b) => {
@@ -134,7 +47,7 @@ export const PhotoGallery = ({ className }: { className?: string }) => {
       }
     });
     setFilteredEvents(sorted);
-  }, [searchTerm, sortOrder]);
+  }, [searchTerm, sortOrder, photos]);
 
   const nextImage = () => {
     if (selectedEvent) {
@@ -168,7 +81,7 @@ export const PhotoGallery = ({ className }: { className?: string }) => {
         <GalleryFilters
           onSearch={handleSearch}
           onSort={handleSort}
-          title="TechStart Image Gallery"
+          title={language === 'en' ? "TechStart Image Gallery" : "معرض الصور"}
         />
       </header>
 
