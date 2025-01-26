@@ -41,7 +41,9 @@ export const getWorkWithUs = cache(async (language: 'en' | 'ar' = 'en'): Promise
     console.error('Error fetching work opportunities:', error);
     return {
       success: false,
-      error: 'Failed to fetch work opportunities'
+      error: language === 'en'
+        ? 'Failed to fetch work opportunities. Please try again later.'
+        : 'فشل في جلب فرص العمل. يرجى المحاولة مرة أخرى لاحقاً.'
     };
   }
 });
