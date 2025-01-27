@@ -33,15 +33,20 @@ export function ImageUpload({ onUpload, defaultImage }: ImageUploadProps) {
         body: formData,
       })
 
-      if (!response.ok) throw new Error('Upload failed')
-
       const data = await response.json()
+      
+      if (!response.ok) {
+        throw new Error(data.error || 'Upload failed')
+      }
+
       const url = data.url as string
       setPreview(url)
       onUpload(url)
     } catch (error) {
       console.error('Upload error:', error)
-      // Handle error (e.g., show a toast notification)
+      // Show error message to user
+      const errorMessage = error instanceof Error ? error.message : 'Failed to upload file'
+      alert(errorMessage) // Using alert for now, consider using a toast notification system
     } finally {
       setUploading(false)
     }

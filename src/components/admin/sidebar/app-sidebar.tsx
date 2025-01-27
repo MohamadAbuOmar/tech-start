@@ -71,20 +71,16 @@ const data: { navMain: NavItem[] } = {
       icon: Layers,
       items: [
         {
+          title: "Programs",
+          url: "/admin/pages/programs",
+        },
+        {
           title: "Palestinian IT Leads",
           url: "/admin/beneficiaries",
         },
         {
           title: "Focus Areas",
           url: "/admin/pages/focusareas",
-        },
-        {
-          title: "Pioneer Program",
-          url: "/admin/pages/programs/pioneer",
-        },
-        {
-          title: "Upskill Program",
-          url: "/admin/pages/programs/upskill",
         },
       ]
     },

@@ -14,6 +14,6 @@ export default async function VideoGalleryPage() {
     return <div>Error loading gallery videos</div>
   }
 
-  return <VideoGallery videos={videosResponse.data} />;
+  return <VideoGallery videos={videosResponse.data} className="min-h-screen" />;
 }
 

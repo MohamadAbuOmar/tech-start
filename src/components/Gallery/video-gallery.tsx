@@ -13,16 +13,16 @@ import { useLanguage } from "@/context/LanguageContext";
 import { LocalizedVideoGallery } from "@/app/actions/pages/gallery";
 
 interface VideoGalleryProps {
-  galleries: LocalizedVideoGallery[];
+  videos: LocalizedVideoGallery[];
   className?: string;
 }
 
 export const VideoGallery = ({
-  galleries,
+  videos,
   className,
 }: VideoGalleryProps) => {
   const { language, isRTL } = useLanguage();
-  const [filteredGalleries, setFilteredGalleries] = useState(galleries);
+  const [filteredGalleries, setFilteredGalleries] = useState(videos);
   const [searchTerm, setSearchTerm] = useState('');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [selectedGallery, setSelectedGallery] = useState<LocalizedVideoGallery | null>(null);
@@ -30,7 +30,7 @@ export const VideoGallery = ({
   const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
-    const filtered = galleries.filter(gallery => 
+    const filtered = videos.filter(gallery => 
       gallery.title.toLowerCase().includes(searchTerm.toLowerCase())
     );
     const sorted = [...filtered].sort((a, b) => {
@@ -99,9 +99,43 @@ export const VideoGallery = ({
                 >
                   <div className="relative w-full h-48">
                     <img
-                      src={video.url}
+                      src={`https://img.youtube.com/vi/${
+                        video.url.includes('v=')
+                          ? video.url.split('v=')[1]
+                          : video.url.split('/').pop()
+                      }/maxresdefault.jpg`}
                       alt={video.title}
                       className="w-full h-full object-cover rounded-lg shadow-md"
+                      onError={(e) => {
+                        // Fallback to medium quality thumbnail if maxres is not available
+                        const target = e.target as HTMLImageElement;
+                        const videoId = video.url.includes('v=')
+                          ? video.url.split('v=')[1]
+                          : video.url.split('/').pop();
+                        target.src = `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`;
+                        // If medium quality fails too, use default thumbnail
+                        target.onerror = () => {
+                          target.src = `https://img.youtube.com/vi/${videoId}/default.jpg`;
+                          // If all thumbnails fail, show placeholder
+                          target.onerror = () => {
+                            const placeholderDiv = document.createElement('div');
+                            placeholderDiv.className = 'w-full h-full';
+                            placeholderDiv.innerHTML = `
+                              <div class="w-full h-full flex items-center justify-center bg-gray-800 rounded-lg">
+                                <div class="text-center">
+                                  <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                                  </svg>
+                                  <p class="mt-2 text-sm text-gray-400">
+                                    ${language === 'en' ? 'Video thumbnail not available' : 'صورة مصغرة غير متوفرة'}
+                                  </p>
+                                </div>
+                              </div>
+                            `;
+                            target.parentNode?.replaceChild(placeholderDiv, target);
+                          };
+                        };
+                      }}
                     />
                     <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-all duration-300 rounded-lg flex items-center justify-center">
                       <Play className="text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300" size={48} />
@@ -136,12 +170,28 @@ export const VideoGallery = ({
                 <X size={24} />
               </Button>
               <div className="relative w-full max-w-4xl aspect-video">
-                <video
-                  ref={videoRef}
-                  src={selectedGallery.videos[currentVideoIndex].url}
+                <iframe
+                  src={`https://www.youtube.com/embed/${
+                    selectedGallery.videos[currentVideoIndex].url.includes('v=')
+                      ? selectedGallery.videos[currentVideoIndex].url.split('v=')[1]
+                      : selectedGallery.videos[currentVideoIndex].url.split('/').pop()
+                  }?rel=0&modestbranding=1&hl=${language}`}
+                  title={language === 'en' ? "YouTube video player" : "مشغل فيديو يوتيوب"}
                   className="w-full h-full rounded-lg"
-                  controls
-                  autoPlay
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  onError={(e) => {
+                    const target = e.target as HTMLIFrameElement;
+                    target.style.display = 'none';
+                    const errorDiv = document.createElement('div');
+                    errorDiv.className = 'w-full h-full flex items-center justify-center bg-gray-100 rounded-lg';
+                    errorDiv.innerHTML = `<p class="text-gray-500">${
+                      language === 'en'
+                        ? 'Failed to load video'
+                        : 'فشل في تحميل الفيديو'
+                    }</p>`;
+                    target.parentNode?.appendChild(errorDiv);
+                  }}
                 />
               </div>
               <div className="mt-4 text-white text-center">

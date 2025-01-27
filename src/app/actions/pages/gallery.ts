@@ -1,10 +1,11 @@
 "use server";
 
 // Runtime configuration handled in route segments
-
 import { cache } from "react";
-import db from "@/app/db/db";
+import { PrismaClient } from "@prisma/client";
 import { ApiResponse } from "@/types/api";
+
+const db = new PrismaClient();
 
 export interface LocalizedImage {
   id: string;
@@ -33,14 +34,56 @@ export interface LocalizedVideoGallery {
   videos: LocalizedVideo[];
 }
 
+export const validateAndFixFeaturedImages = async (galleryId: string) => {
+  const gallery = await db.gallery.findUnique({
+    where: { id: galleryId },
+    include: { images: true }
+  });
+
+  if (!gallery) {
+    throw new Error('Gallery not found');
+  }
+
+  const featuredImages = gallery.images.filter(img => img.featured);
+  
+  if (featuredImages.length === 1) {
+    return; // Already valid
+  }
+
+  // Auto-correct: make the first image featured if none are featured
+  if (featuredImages.length === 0 && gallery.images.length > 0) {
+    await db.image.update({
+      where: { id: gallery.images[0].id },
+      data: { featured: true }
+    });
+  }
+
+  // If multiple featured images, keep only the first one featured
+  if (featuredImages.length > 1) {
+    await Promise.all(featuredImages.slice(1).map(img => 
+      db.image.update({
+        where: { id: img.id },
+        data: { featured: false }
+      })
+    ));
+  }
+};
+
 export const getGalleries = cache(async (language: 'en' | 'ar' = 'en'): Promise<ApiResponse<LocalizedGallery[]>> => {
   try {
     const galleries = await db.gallery.findMany({
       include: {
-        images: true
+        images: {
+          orderBy: {
+            featured: 'desc'
+          }
+        }
       },
       orderBy: { createdAt: 'desc' },
     });
+
+    // Validate featured images in parallel
+    await Promise.all(galleries.map(gallery => validateAndFixFeaturedImages(gallery.id)));
 
     const localizedGalleries = galleries.map(gallery => ({
       id: gallery.id,
@@ -67,6 +110,36 @@ export const getGalleries = cache(async (language: 'en' | 'ar' = 'en'): Promise<
     };
   }
 });
+
+export const addImageToGallery = async (galleryId: string, imageUrl: string, title_en: string, title_ar: string): Promise<ApiResponse<LocalizedImage>> => {
+  try {
+    const image = await db.image.create({
+      data: {
+        url: imageUrl,
+        title_en,
+        title_ar,
+        galleryId,
+        featured: false
+      }
+    });
+
+    return {
+      success: true,
+      data: {
+        id: image.id,
+        url: image.url,
+        title: image.title_en,
+        featured: image.featured
+      }
+    };
+  } catch (error) {
+    console.error('Error adding image to gallery:', error);
+    return {
+      success: false,
+      error: 'Failed to add image to gallery'
+    };
+  }
+};
 
 export const getGalleryPhotos = cache(async (language: 'en' | 'ar' = 'en'): Promise<ApiResponse<LocalizedGallery[]>> => {
   return getGalleries(language);
