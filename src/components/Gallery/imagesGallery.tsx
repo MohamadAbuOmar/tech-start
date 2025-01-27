@@ -7,7 +7,6 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { GalleryFilters } from "./GalleryFilters";
 import { ChevronLeft, ChevronRight, X, Calendar } from "lucide-react";
-
 import { useLanguage } from "@/context/LanguageContext";
 
 interface Image {
@@ -28,7 +27,7 @@ interface PhotoGalleryProps {
 }
 
 export const PhotoGallery = ({ photos, className }: PhotoGalleryProps) => {
-  const { language } = useLanguage();
+  const { language, isRTL } = useLanguage();
   const [filteredEvents, setFilteredEvents] = useState(photos);
   const [searchTerm, setSearchTerm] = useState("");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
@@ -170,26 +169,27 @@ export const PhotoGallery = ({ photos, className }: PhotoGalleryProps) => {
                   {selectedEvent.date}
                 </p>
               </div>
-              <div className="absolute left-4 top-1/2 transform -translate-y-1/2">
+              <div className={`absolute ${isRTL ? 'right-4' : 'left-4'} top-1/2 transform -translate-y-1/2`}>
                 <Button
                   variant="ghost"
                   size="icon"
                   className="text-white"
                   onClick={prevImage}
                 >
-                  <ChevronLeft size={36} />
+                  {isRTL ? <ChevronRight size={36} /> : <ChevronLeft size={36} />}
                 </Button>
               </div>
-              <div className="absolute right-4 top-1/2 transform -translate-y-1/2">
+              <div className={`absolute ${isRTL ? 'left-4' : 'right-4'} top-1/2 transform -translate-y-1/2`}>
                 <Button
                   variant="ghost"
                   size="icon"
                   className="text-white"
                   onClick={nextImage}
                 >
-                  <ChevronRight size={36} />
+                  {isRTL ? <ChevronLeft size={36} /> : <ChevronRight size={36} />}
                 </Button>
               </div>
+
               <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2">
                 <div className="flex space-x-2">
                   {selectedEvent.images.map((_, index) => (
