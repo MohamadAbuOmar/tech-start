@@ -13,16 +13,31 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { IconSelector } from "@/components/admin/shared/IconSelector";
-import { ProgramFormValues } from "@/app/actions/pages/programs";
+import { ProgramFormValues } from "./types";
+import { useCallback } from "react";
 
 interface DynamicFeatureListProps {
   form: UseFormReturn<ProgramFormValues>;
 }
 
 export function DynamicFeatureList({ form }: DynamicFeatureListProps) {
-  const { fields, append, remove } = form.useFieldArray({
-    name: "features",
-  });
+  const features = form.watch('features') || [];
+
+  const handleAddFeature = useCallback(() => {
+    const newFeatures = [...features, {
+      icon: "Activity",
+      title_en: "",
+      title_ar: "",
+      description_en: "",
+      description_ar: ""
+    }];
+    form.setValue('features', newFeatures);
+  }, [features, form]);
+
+  const handleRemoveFeature = useCallback((index: number) => {
+    const newFeatures = features.filter((_, i) => i !== index);
+    form.setValue('features', newFeatures);
+  }, [features, form]);
 
   return (
     <div className="space-y-4">
@@ -32,31 +47,43 @@ export function DynamicFeatureList({ form }: DynamicFeatureListProps) {
           type="button"
           variant="outline"
           size="sm"
-          onClick={() => append({ icon: "", title_en: "", title_ar: "", description_en: "", description_ar: "" })}
+          onClick={handleAddFeature}
         >
           <PlusIcon className="h-4 w-4 mr-2" />
           Add Feature
         </Button>
       </div>
 
-      {fields.map((field, index) => (
-        <div key={field.id} className="p-4 border rounded-lg space-y-4">
+      {features.map((feature, index) => (
+        <div key={index} className="p-4 border rounded-lg space-y-4">
           <div className="flex justify-between items-start">
             <h4 className="text-sm font-medium">Feature {index + 1}</h4>
             <Button
               type="button"
               variant="ghost"
               size="sm"
-              onClick={() => remove(index)}
+              onClick={() => handleRemoveFeature(index)}
             >
               <TrashIcon className="h-4 w-4" />
             </Button>
           </div>
 
-          <IconSelector
-            form={form}
+          <FormField
+            control={form.control}
             name={`features.${index}.icon`}
-            label="Feature Icon"
+            defaultValue={feature.icon}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Feature Icon</FormLabel>
+                <FormControl>
+                  <IconSelector 
+                    value={field.value || "Activity"}
+                    onChange={field.onChange}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
           />
 
           <div className="grid grid-cols-2 gap-4">
@@ -64,6 +91,7 @@ export function DynamicFeatureList({ form }: DynamicFeatureListProps) {
               <FormField
                 control={form.control}
                 name={`features.${index}.title_en`}
+                defaultValue={feature.title_en}
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Title (English)</FormLabel>
@@ -77,6 +105,7 @@ export function DynamicFeatureList({ form }: DynamicFeatureListProps) {
               <FormField
                 control={form.control}
                 name={`features.${index}.description_en`}
+                defaultValue={feature.description_en}
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Description (English)</FormLabel>
@@ -93,6 +122,7 @@ export function DynamicFeatureList({ form }: DynamicFeatureListProps) {
               <FormField
                 control={form.control}
                 name={`features.${index}.title_ar`}
+                defaultValue={feature.title_ar}
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Title (Arabic)</FormLabel>
@@ -106,6 +136,7 @@ export function DynamicFeatureList({ form }: DynamicFeatureListProps) {
               <FormField
                 control={form.control}
                 name={`features.${index}.description_ar`}
+                defaultValue={feature.description_ar}
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Description (Arabic)</FormLabel>

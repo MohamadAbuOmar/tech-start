@@ -1,7 +1,7 @@
 "use client";
 
 import { createProgram } from "@/app/actions/pages/programs";
-import { ProgramForm } from "../components/ProgramForm";
+import { ProgramFormWrapper } from "../components/ProgramFormWrapper";
 
 export default function CreateProgram() {
   return (
@@ -12,7 +12,7 @@ export default function CreateProgram() {
       </div>
 
       <div className="bg-white rounded-lg shadow-sm p-6">
-        <ProgramForm onSubmit={createProgram} />
+        <ProgramFormWrapper onSubmit={createProgram} />
       </div>
     </div>
   );

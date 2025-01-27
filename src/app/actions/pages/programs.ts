@@ -1,7 +1,5 @@
 "use server";
 
-"use server";
-
 import { cache } from "react";
 import { revalidatePath } from "next/cache";
 import db from "@/app/db/db";
@@ -10,7 +8,7 @@ import { ProgramType } from "@prisma/client";
 import { z } from "zod";
 
 // Program form validation schema
-export const programSchema = z.object({
+const programSchema = z.object({
   type: z.enum(['PIONEER', 'UPSKILL']),
   name_en: z.string().min(1, 'Name in English is required'),
   name_ar: z.string().min(1, 'Name in Arabic is required'),
@@ -36,13 +34,7 @@ export const programSchema = z.object({
     description_en: z.string(),
     description_ar: z.string()
   })).default([]),
-  faqs: z.array(z.object({
-    question_en: z.string(),
-    question_ar: z.string(),
-    answer_en: z.string(),
-    answer_ar: z.string(),
-    order: z.number().default(0)
-  })).default([])
+  // FAQ schema removed in favor of using the main FAQ system
 });
 
 // Admin-specific functions for fetching programs
@@ -50,11 +42,7 @@ export async function getAdminPrograms(): Promise<ApiResponse<any[]>> {
   try {
     const programs = await db.program.findMany({
       orderBy: { order: 'asc' },
-      include: {
-        faqs: {
-          orderBy: { order: 'asc' }
-        }
-      }
+      // FAQ relation removed in favor of using the main FAQ system
     });
 
     return {
@@ -74,11 +62,7 @@ export async function getAdminProgramById(id: string): Promise<ApiResponse<any>>
   try {
     const program = await db.program.findUnique({
       where: { id },
-      include: {
-        faqs: {
-          orderBy: { order: 'asc' }
-        }
-      }
+      // FAQ relation removed in favor of using the main FAQ system
     });
 
     if (!program) {
@@ -101,7 +85,7 @@ export async function getAdminProgramById(id: string): Promise<ApiResponse<any>>
   }
 }
 
-export interface LocalizedProgram {
+interface LocalizedProgram {
   id: string;
   type: ProgramType;
   name: string;
@@ -126,23 +110,14 @@ export interface LocalizedProgram {
     title: string;
     description: string;
   }>;
-  faqs: Array<{
-    id: string;
-    question: string;
-    answer: string;
-    order: number;
-  }>;
+  // FAQ section removed in favor of using the main FAQ system
 }
 
 export const getPioneerProgram = cache(async (language: 'en' | 'ar' = 'en'): Promise<ApiResponse<LocalizedProgram>> => {
   try {
     const program = await db.program.findFirst({
       where: { type: 'PIONEER' },
-      include: {
-        faqs: {
-          orderBy: { order: 'asc' }
-        }
-      }
+      // FAQ relation removed in favor of using the main FAQ system
     });
 
     // Default data for Pioneer program if not found in DB
@@ -205,12 +180,6 @@ export const getPioneerProgram = cache(async (language: 'en' | 'ar' = 'en'): Pro
         title: language === 'en' ? feature.title_en : feature.title_ar,
         description: language === 'en' ? feature.description_en : feature.description_ar,
       })) : [],
-      faqs: (programData.faqs || []).map((faq: any) => ({
-        id: faq.id,
-        question: language === 'en' ? faq.question_en : faq.question_ar,
-        answer: language === 'en' ? faq.answer_en : faq.answer_ar,
-        order: faq.order
-      }))
     };
 
     return {
@@ -232,11 +201,7 @@ export const getUpskillProgram = cache(async (language: 'en' | 'ar' = 'en'): Pro
   try {
     const program = await db.program.findFirst({
       where: { type: 'UPSKILL' },
-      include: {
-        faqs: {
-          orderBy: { order: 'asc' }
-        }
-      }
+      // FAQ relation removed in favor of using the main FAQ system
     });
 
     // Default data for Upskill program if not found in DB
@@ -323,7 +288,7 @@ export const getUpskillProgram = cache(async (language: 'en' | 'ar' = 'en'): Pro
 });
 
 // Admin CRUD Operations
-export type ProgramFormData = {
+type ProgramFormData = {
   type: ProgramType;
   name_en: string;
   name_ar: string;
@@ -377,12 +342,7 @@ export async function createProgram(data: ProgramFormData, language: 'en' | 'ar'
       data: {
         ...programData,
         features: JSON.stringify(features),
-        faqs: {
-          create: faqs.map((faq, index) => ({
-            ...faq,
-            order: index
-          }))
-        }
+        // FAQ section removed in favor of using the main FAQ system
       },
       include: {
         faqs: true
@@ -440,13 +400,7 @@ export async function updateProgram(id: string, data: ProgramFormData, language:
       data: {
         ...programData,
         features: JSON.stringify(features),
-        faqs: {
-          deleteMany: {},
-          create: faqs.map((faq, index) => ({
-            ...faq,
-            order: index
-          }))
-        }
+        // FAQ section removed in favor of using the main FAQ system
       },
       include: {
         faqs: true

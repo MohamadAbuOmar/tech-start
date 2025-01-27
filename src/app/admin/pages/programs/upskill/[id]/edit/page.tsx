@@ -1,6 +1,6 @@
-import { getAdminProgramById, updateProgram } from "@/app/actions/pages/programs";
-import { ProgramForm } from "@/app/admin/pages/programs/components/ProgramForm";
+import { getAdminProgramById } from "@/app/actions/pages/programs";
 import { notFound } from "next/navigation";
+import EditProgramForm from "../../../[id]/edit/EditProgramForm";
 
 interface Props {
   params: {
@@ -18,20 +18,7 @@ export default async function EditUpskillProgramPage({ params }: Props) {
   return (
     <div className="container mx-auto py-10">
       <h1 className="text-3xl font-bold mb-6">Edit Upskill Program</h1>
-      <ProgramForm
-        mode="edit"
-        onSubmit={async (formData) => {
-          const result = await updateProgram(params.id, {
-            ...formData,
-            type: 'UPSKILL'
-          });
-          return result;
-        }}
-        initialData={{
-          ...program,
-          features: program.features ? JSON.parse(program.features.toString()) : [],
-        }}
-      />
+      <EditProgramForm program={program} />
     </div>
   );
 }

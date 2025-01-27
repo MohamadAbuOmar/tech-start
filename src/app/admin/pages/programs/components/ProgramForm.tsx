@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { ImageUpload } from "@/lib/ImageUpload";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -22,9 +21,8 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/componen
 import { Loader2 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { DynamicFeatureList } from "./DynamicFeatureList";
-import { DynamicFaqList } from "./DynamicFaqList";
 import { ProgramType } from "@prisma/client";
-import { ImageUploader } from "@/components/admin/shared/ImageUploader";
+import { ImageUpload } from "@/lib/ImageUpload";
 
 const programFormSchema = z.object({
   type: z.enum(["PIONEER", "UPSKILL"]),
@@ -51,14 +49,7 @@ const programFormSchema = z.object({
     title_ar: z.string().min(3),
     description_en: z.string().min(10),
     description_ar: z.string().min(10),
-  })),
-  faqs: z.array(z.object({
-    question_en: z.string().min(5),
-    question_ar: z.string().min(5),
-    answer_en: z.string().min(10),
-    answer_ar: z.string().min(10),
-    order: z.number().min(0),
-  })),
+  }))
 });
 
 type ProgramFormValues = z.infer<typeof programFormSchema>;
@@ -68,11 +59,11 @@ interface ProgramFormProps {
   onSubmit: (formData: FormData) => Promise<{ success: boolean; error?: string }>;
   buttonText?: string;
   mode?: "create" | "edit";
+  isSubmitting?: boolean;
 }
 
-export function ProgramForm({ initialData, onSubmit, buttonText = "Create Program", mode = "create" }: ProgramFormProps) {
+export function ProgramForm({ initialData, onSubmit, buttonText = "Create Program", mode = "create", isSubmitting = false }: ProgramFormProps) {
   const router = useRouter();
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const form = useForm<ProgramFormValues>({
     resolver: zodResolver(programFormSchema),
@@ -96,7 +87,6 @@ export function ProgramForm({ initialData, onSubmit, buttonText = "Create Progra
       overview_en: "",
       overview_ar: "",
       features: [],
-      faqs: [],
     },
   });
 
@@ -110,14 +100,13 @@ export function ProgramForm({ initialData, onSubmit, buttonText = "Create Progra
       return;
     }
 
-    setIsSubmitting(true);
     const formData = new FormData();
     
     // Handle arrays and complex objects separately
     Object.entries(data).forEach(([key, value]) => {
       if (value === null) return;
       
-      if (key === 'features' || key === 'faqs') {
+      if (key === 'features') {
         formData.append(key, JSON.stringify(value));
       } else if (typeof value === 'object') {
         // Handle other potential object values
@@ -127,33 +116,7 @@ export function ProgramForm({ initialData, onSubmit, buttonText = "Create Progra
       }
     });
 
-    try {
-      const result = await onSubmit(formData);
-      if (result.success) {
-        toast({
-          title: "Success",
-          description: "Program saved successfully",
-          variant: "default",
-        });
-        router.push(`/admin/pages/programs/${data.type.toLowerCase()}`);
-        router.refresh();
-      } else {
-        toast({
-          title: "Error",
-          description: result.error || "Something went wrong",
-          variant: "destructive",
-        });
-      }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    } catch (err) {
-      toast({
-        title: "Error",
-        description: "Failed to save program",
-        variant: "destructive",
-      });
-    } finally {
-      setIsSubmitting(false);
-    }
+    await onSubmit(formData);
   }
 
   return (
@@ -171,7 +134,7 @@ export function ProgramForm({ initialData, onSubmit, buttonText = "Create Progra
                 <FormItem>
                   <FormLabel>Program Image</FormLabel>
                   <FormControl>
-                    <ImageUploader
+                    <ImageUpload
                       onUpload={(url) => field.onChange(url)}
                       defaultImage={field.value || undefined}
                     />
@@ -187,7 +150,7 @@ export function ProgramForm({ initialData, onSubmit, buttonText = "Create Progra
                 <FormItem>
                   <FormLabel>Hero Image</FormLabel>
                   <FormControl>
-                    <ImageUploader
+                    <ImageUpload
                       onUpload={(url) => field.onChange(url)}
                       defaultImage={field.value || undefined}
                     />
@@ -419,7 +382,6 @@ export function ProgramForm({ initialData, onSubmit, buttonText = "Create Progra
               />
             </div>
             <DynamicFeatureList form={form} />
-            <DynamicFaqList form={form} />
           </CardContent>
           <CardFooter className="flex justify-end space-x-4">
             <Button

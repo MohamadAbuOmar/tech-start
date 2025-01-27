@@ -1,13 +1,6 @@
 "use client";
 
-import { UseFormReturn } from "react-hook-form";
-import {
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import React from "react";
 import {
   Select,
   SelectContent,
@@ -16,48 +9,50 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import * as Icons from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface IconSelectorProps {
-  form: UseFormReturn<any>;
-  name: string;
-  label?: string;
+  value: string;
+  onChange: (value: string) => void;
 }
 
-export function IconSelector({ form, name, label = "Icon" }: IconSelectorProps) {
-  const iconNames = Object.keys(Icons).filter(
-    (key) => typeof Icons[key as keyof typeof Icons] === "function"
-  );
+export function IconSelector({ value, onChange }: IconSelectorProps) {
+  const iconList = Object.entries(Icons)
+    .filter(([name, icon]) => typeof icon === "function" && icon !== undefined && name !== "default")
+    .sort((a, b) => a[0].localeCompare(b[0]));
+
+  const renderIcon = (iconName: string) => {
+    const Icon = Icons[iconName as keyof typeof Icons];
+    return Icon ? <Icon className="h-4 w-4" /> : null;
+  };
 
   return (
-    <FormField
-      control={form.control}
-      name={name}
-      render={({ field }) => (
-        <FormItem>
-          <FormLabel>{label}</FormLabel>
-          <Select onValueChange={field.onChange} defaultValue={field.value}>
-            <FormControl>
-              <SelectTrigger>
-                <SelectValue placeholder="Select an icon" />
-              </SelectTrigger>
-            </FormControl>
-            <SelectContent>
-              {iconNames.map((iconName) => {
-                const Icon = Icons[iconName as keyof typeof Icons] as React.ComponentType;
-                return (
-                  <SelectItem key={iconName} value={iconName}>
-                    <div className="flex items-center gap-2">
-                      <Icon className="h-4 w-4" />
-                      <span>{iconName}</span>
-                    </div>
-                  </SelectItem>
-                );
-              })}
-            </SelectContent>
-          </Select>
-          <FormMessage />
-        </FormItem>
-      )}
-    />
+    <Select 
+      onValueChange={onChange}
+      value={value || ""}
+    >
+      <SelectTrigger className={cn("w-full", !value && "text-muted-foreground")}>
+        <SelectValue>
+          {value ? (
+            <div className="flex items-center gap-2">
+              {renderIcon(value)}
+              <span>{value}</span>
+            </div>
+          ) : (
+            "Select an icon"
+          )}
+        </SelectValue>
+      </SelectTrigger>
+      <SelectContent>
+        {iconList.map(([name]) => (
+          <SelectItem key={name} value={name}>
+            <div className="flex items-center gap-2">
+              {renderIcon(name)}
+              <span>{name}</span>
+            </div>
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
   );
 }

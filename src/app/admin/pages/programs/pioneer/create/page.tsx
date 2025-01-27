@@ -1,18 +1,14 @@
+"use client";
+
 import { createProgram } from "@/app/actions/pages/programs";
-import { ProgramForm } from "@/app/admin/pages/programs/components/ProgramForm";
+import { ProgramFormWrapper } from "../../components/ProgramFormWrapper";
 
 export default function CreatePioneerProgramPage() {
   return (
     <div className="container mx-auto py-10">
       <h1 className="text-3xl font-bold mb-6">Create Pioneer Program</h1>
-      <ProgramForm
-        onSubmit={async (formData) => {
-          const result = await createProgram({
-            ...formData,
-            type: 'PIONEER'
-          });
-          return result;
-        }}
+      <ProgramFormWrapper
+        onSubmit={createProgram}
         initialData={{
           type: 'PIONEER',
           name_en: '',
@@ -32,8 +28,7 @@ export default function CreatePioneerProgramPage() {
           heroImage: '',
           overview_en: '',
           overview_ar: '',
-          features: [],
-          faqs: []
+          features: []
         }}
       />
     </div>

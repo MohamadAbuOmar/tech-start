@@ -19,7 +19,10 @@ export function ImageUpload({ onUpload, defaultImage }: ImageUploadProps) {
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
     setUploading(true)
     const file = acceptedFiles[0]
-    if (!file) return
+    if (!file) {
+      setUploading(false)
+      return
+    }
 
     const formData = new FormData()
     formData.append('file', file)
@@ -33,8 +36,9 @@ export function ImageUpload({ onUpload, defaultImage }: ImageUploadProps) {
       if (!response.ok) throw new Error('Upload failed')
 
       const data = await response.json()
-      setPreview(data.url)
-      onUpload(data.url)
+      const url = data.url as string
+      setPreview(url)
+      onUpload(url)
     } catch (error) {
       console.error('Upload error:', error)
       // Handle error (e.g., show a toast notification)

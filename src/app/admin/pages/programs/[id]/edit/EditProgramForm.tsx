@@ -2,7 +2,7 @@
 
 import { Program } from "@prisma/client";
 import { updateProgram } from "@/app/actions/pages/programs";
-import { ProgramForm } from "../../components/ProgramForm";
+import { ProgramFormWrapper } from "../../components/ProgramFormWrapper";
 
 interface EditProgramFormProps {
   program: Program;
@@ -10,7 +10,7 @@ interface EditProgramFormProps {
 
 export default function EditProgramForm({ program }: EditProgramFormProps) {
   return (
-    <ProgramForm 
+    <ProgramFormWrapper 
       initialData={{
         type: program.type,
         name_en: program.name_en,
@@ -30,8 +30,7 @@ export default function EditProgramForm({ program }: EditProgramFormProps) {
         heroImage: program.heroImage,
         overview_en: program.overview_en,
         overview_ar: program.overview_ar,
-        features: program.features ? JSON.parse(program.features.toString()) : [],
-        faqs: program.faqs || []
+        features: program.features ? JSON.parse(program.features.toString()) : []
       }} 
       onSubmit={async (formData) => {
         const result = await updateProgram(program.id, formData);
