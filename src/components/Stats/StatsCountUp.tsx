@@ -48,7 +48,7 @@ export default function StatsCountUp({ stats }: StatsCountUpProps) {
                 key={stat.id} 
                 name={stat.name}
                 value={stat.value}
-                icon={getIconByType(stat.type)}
+                icon={getIconByType(stat.icon)}
               />
             ))}
           </dl>
@@ -68,6 +68,7 @@ function Stat({
   icon: React.ElementType;
 }) {
   const { count, ref, controls } = useCountUp(value);
+  const { language, isRTL } = useLanguage();
 
   return (
     <motion.div

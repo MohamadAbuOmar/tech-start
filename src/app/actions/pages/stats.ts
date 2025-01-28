@@ -2,7 +2,7 @@
 
 import { cache } from "react";
 import db from "@/app/db/db";
-import { ApiResponse } from "@/types/api";
+import { ApiResponse } from "../../../types/api";
 
 export interface LocalizedStat {
   id: string;
