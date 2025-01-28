@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { useCountUp } from "@/lib/useCountUp";
 import { motion } from "framer-motion";
 import { Building, Briefcase, Building2, DollarSign } from "lucide-react";
@@ -7,7 +8,7 @@ import { useLanguage } from "@/context/LanguageContext";
 import { LocalizedStat } from "@/app/actions/pages/stats";
 
 const getIconByType = (type: string) => {
-  switch (type) {
+  switch (type?.toLowerCase()) {
     case 'firms':
       return Building;
     case 'jobs':
@@ -17,6 +18,7 @@ const getIconByType = (type: string) => {
     case 'grants':
       return DollarSign;
     default:
+      console.warn('Unknown icon type:', type);
       return Building;
   }
 };
@@ -27,6 +29,11 @@ interface StatsCountUpProps {
 
 export default function StatsCountUp({ stats }: StatsCountUpProps) {
   const { language, isRTL } = useLanguage();
+  
+  useEffect(() => {
+    console.log('StatsCountUp received stats:', stats);
+  }, [stats]);
+
   return (
     <section className="bg-gradient-to-b from-white to-gray-50 py-24 sm:py-32">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
@@ -43,7 +50,7 @@ export default function StatsCountUp({ stats }: StatsCountUpProps) {
             </p>
           </div>
           <dl className={`mt-16 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4 ${isRTL ? 'rtl' : 'ltr'}`}>
-            {stats.map((stat) => (
+            {stats?.map((stat) => (
               <Stat 
                 key={stat.id} 
                 name={stat.name}
@@ -67,16 +74,29 @@ function Stat({
   value: number;
   icon: React.ElementType;
 }) {
-  const { count, ref, controls } = useCountUp(value);
   const { language, isRTL } = useLanguage();
+  const initialValue = Number(value) || 0;
+  const { count, ref, inView } = useCountUp(initialValue);
+
+  useEffect(() => {
+    console.log('Stat component:', {
+      name,
+      value,
+      initialValue,
+      count,
+      language,
+      isRTL
+    });
+  }, [name, value, initialValue, count, language, isRTL]);
 
   return (
     <motion.div
       ref={ref}
       initial={{ opacity: 0, y: 20 }}
-      animate={controls}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.1, margin: "50px" }}
       transition={{ duration: 0.5, ease: "easeOut" }}
-      className={`relative flex flex-col h-[200px] rounded-2xl bg-white px-6 py-8 shadow-lg transition-all hover:shadow-xl ${isRTL ? 'rtl' : 'ltr'}`}
+      className={`relative flex flex-col min-h-[200px] rounded-2xl ${inView ? 'bg-white' : 'bg-gray-100'} px-6 py-8 shadow-lg transition-all hover:shadow-xl ${isRTL ? 'rtl' : 'ltr'}`}
     >
       <dt className={`flex items-center gap-3 text-lg font-semibold leading-7 text-[#142451] ${isRTL ? 'flex-row-reverse' : ''}`}>
         <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-gray-50">
@@ -85,11 +105,13 @@ function Stat({
         {name}
       </dt>
       <dd className="mt-auto">
-        <div className={`flex items-baseline ${isRTL ? 'flex-row-reverse' : ''}`}>
-          <p className="text-4xl font-bold tracking-tight text-[#142451]">
-            {count.toLocaleString(language === 'en' ? 'en-US' : 'ar-SA')}
-          </p>
-          <p className={`${isRTL ? 'ml-2' : 'mr-2'} text-sm font-medium text-[#862996]`}>
+        <div className={`flex flex-col ${isRTL ? 'items-end' : 'items-start'}`}>
+          <div className={`flex items-baseline gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
+            <p className="text-4xl font-bold tracking-tight text-[#142451]" dir={isRTL ? 'rtl' : 'ltr'}>
+              {count.toLocaleString(language === 'en' ? 'en-US' : 'ar-SA', { useGrouping: true })}
+            </p>
+          </div>
+          <p className="text-sm font-medium text-[#862996] mt-1">
             {language === 'en' ? 'total' : 'المجموع'}
           </p>
         </div>

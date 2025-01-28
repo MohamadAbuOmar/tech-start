@@ -4,6 +4,7 @@ const prisma = new PrismaClient();
 
 async function main() {
   try {
+    console.log('Deleting existing hero steps...');
     await prisma.heroStep.deleteMany();
     
     const heroSteps = [
@@ -53,13 +54,16 @@ async function main() {
       }
     ];
 
+    console.log('Creating new hero steps...');
     for (const step of heroSteps) {
-      await prisma.heroStep.create({ data: step });
+      const created = await prisma.heroStep.create({ data: step });
+      console.log(`Created hero step: ${step.title_en}`);
     }
     
     console.log('Hero steps seeded successfully');
   } catch (error) {
     console.error('Error seeding hero steps:', error);
+    console.error('Error details:', error.message);
     process.exit(1);
   } finally {
     await prisma.$disconnect();

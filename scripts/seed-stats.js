@@ -10,25 +10,25 @@ async function main() {
       {
         name_en: "Local firms benefiting",
         name_ar: "الشركات المحلية المستفيدة",
-        value: 150,
+        value: parseInt("150", 10),
         icon: "firms"
       },
       {
         name_en: "New IT jobs created",
         name_ar: "وظائف تكنولوجيا المعلومات الجديدة",
-        value: 300,
+        value: parseInt("300", 10),
         icon: "jobs"
       },
       {
         name_en: "New firms established",
         name_ar: "الشركات الجديدة المؤسسة",
-        value: 75,
+        value: parseInt("75", 10),
         icon: "new_firms"
       },
       {
         name_en: "Total awarded grants amounts",
         name_ar: "إجمالي مبالغ المنح الممنوحة",
-        value: 500,
+        value: parseInt("500", 10),
         icon: "grants"
       }
     ];

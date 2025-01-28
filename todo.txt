@@ -1,4 +1,4 @@
-- [x] Stats
+- [x] Stats ✓ (displays correct values, animations working)
 - [ ] Hero
 - [ ] Programs Section
 - [ ] Media Center
