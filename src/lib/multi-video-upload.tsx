@@ -37,10 +37,39 @@ export function MultiVideoUpload({ onUpload, defaultVideos = [] }: MultiVideoUpl
 
   const onDrop = useCallback(
     async (acceptedFiles: File[]) => {
+      const maxSize = parseInt(process.env.NEXT_PUBLIC_MAX_VIDEO_SIZE || '104857600', 10)
+      const allowedTypes = ['video/mp4', 'video/webm', 'video/ogg']
+      const invalidFiles = acceptedFiles.filter(file => {
+        if (file.size > maxSize) {
+          toast({
+            title: "Error",
+            description: `File "${file.name}" exceeds the maximum limit (100MB)`,
+            variant: "destructive",
+          })
+          return true
+        }
+        if (!allowedTypes.includes(file.type)) {
+          toast({
+            title: "Error",
+            description: `File "${file.name}" is not a valid video file (MP4, WebM, OGG)`,
+            variant: "destructive",
+          })
+          return true
+        }
+        return false
+      })
+
+      if (invalidFiles.length === acceptedFiles.length) return
+
       setUploading(true)
-      const newVideos: VideoUpload[] = []
+      const newVideos: VideoUpload[] = videos.map(video => ({
+        ...video,
+        type: video.type || 'local'
+      }))
 
       for (const file of acceptedFiles) {
+        if (invalidFiles.includes(file)) continue
+
         const formData = new FormData()
         formData.append("file", file)
 
@@ -50,11 +79,9 @@ export function MultiVideoUpload({ onUpload, defaultVideos = [] }: MultiVideoUpl
             body: formData,
           })
 
-          if (!response.ok) {
-            throw new Error("Upload failed")
-          }
-
           const data = await response.json()
+          if (!response.ok) throw new Error(data.error || "Upload failed")
+
           if (data.success && data.url) {
             const videoData: VideoUpload = {
               url: data.url,
@@ -65,6 +92,10 @@ export function MultiVideoUpload({ onUpload, defaultVideos = [] }: MultiVideoUpl
               type: "local",
             }
             newVideos.push(videoData)
+            toast({
+              title: "Success",
+              description: `Video "${file.name}" uploaded successfully`,
+            })
           }
         } catch (error) {
           console.error("Upload error:", error)
@@ -102,49 +133,52 @@ export function MultiVideoUpload({ onUpload, defaultVideos = [] }: MultiVideoUpl
   }
 
   const handleRemove = async (index: number) => {
-    const videoToRemove = videos[index]
+    const videoToRemove = videos[index];
+    const previousVideos = [...videos];
+    
+    // Optimistically update UI
+    const newVideos = videos.filter((_, i) => i !== index);
+    setVideos(newVideos);
+    onUpload(newVideos);
+    
     if (videoToRemove.type === "local") {
       try {
         const response = await fetch("/api/delete-video", {
           method: "POST",
           headers: {
-            "Content-Security-Policy": "default-src 'self'; connect-src 'self' https:;",
             "Content-Type": "application/json",
           },
           body: JSON.stringify({ url: videoToRemove.url }),
-        })
+        });
 
-        const data = await response.json()
+        const data = await response.json();
 
-        if (!response.ok) {
-          throw new Error(data.error || "Failed to delete video from server")
+        if (!response.ok || !data.success) {
+          setVideos(previousVideos);
+          onUpload(previousVideos);
+          throw new Error(data.error || "Failed to delete video");
         }
 
-        if (data.success) {
-          const newVideos = videos.filter((_, i) => i !== index)
-          setVideos(newVideos)
-          onUpload(newVideos)
-
-          toast({
-            title: "Success",
-            description: "Video deleted successfully",
-          })
-        } else {
-          throw new Error(data.error || "Failed to delete video")
-        }
+        toast({
+          title: "Success",
+          description: "Video deleted successfully",
+        });
       } catch (error) {
-        console.error("Delete error:", error)
+        console.error("Delete error:", error);
+        setVideos(previousVideos);
+        onUpload(previousVideos);
         toast({
           title: "Error",
           description: error instanceof Error ? error.message : "Failed to delete video",
           variant: "destructive",
-        })
+        });
       }
     } else {
-      // For YouTube videos, just remove from the list
-      const newVideos = videos.filter((_, i) => i !== index)
-      setVideos(newVideos)
-      onUpload(newVideos)
+      // For YouTube videos, just update the UI state
+      toast({
+        title: "Success",
+        description: "Video removed from list",
+      });
     }
   }
 
