@@ -24,7 +24,7 @@ export const getStats = cache(async (language: 'en' | 'ar' = 'en'): Promise<ApiR
       }
     });
     
-    console.log('Raw stats from DB:', JSON.stringify(stats, null, 2));
+<<
 
     const localizedStats = stats.map(stat => {
       const rawValue = stat.value;

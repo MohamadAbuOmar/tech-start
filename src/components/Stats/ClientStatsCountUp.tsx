@@ -22,16 +22,7 @@ export default function ClientStatsCountUp({ initialStats }: ClientStatsCountUpP
     return initialValues;
   });
 
-  useEffect(() => {
-    if (initialStats?.length) {
-      const validStats = initialStats.map(stat => ({
-        ...stat,
-        value: typeof stat.value === 'string' ? parseInt(stat.value, 10) : Number(stat.value) || 0
-      }));
-      console.log('Updating stats with:', validStats);
-      setStats(validStats);
-    }
-  }, [initialStats]);
+
 
   if (!stats?.length) {
     return null;

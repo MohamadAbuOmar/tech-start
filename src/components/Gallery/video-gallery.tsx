@@ -10,21 +10,10 @@ import { GalleryFilters } from "./GalleryFilters";
 
 import { useLanguage } from "@/context/LanguageContext";
 
-interface Video {
-  src: string;
-  title: string;
-  thumbnail: string;
-}
-
-interface Event {
-  id: string;
-  name: string;
-  date: string;
-  videos: Video[];
-}
+import { LocalizedVideoGallery } from "@/app/actions/pages/gallery";
 
 interface VideoGalleryProps {
-  videos: Event[];
+  videos: LocalizedVideoGallery[];
   className?: string;
 }
 
@@ -33,39 +22,39 @@ export const VideoGallery = ({
   className,
 }: VideoGalleryProps) => {
   const { language } = useLanguage();
-  const [filteredEvents, setFilteredEvents] = useState(videos);
+  const [filteredGalleries, setFilteredGalleries] = useState(videos);
   const [searchTerm, setSearchTerm] = useState('');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
-  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
+  const [selectedGallery, setSelectedGallery] = useState<LocalizedVideoGallery | null>(null);
   const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
-  const videoRef = useRef<HTMLVideoElement>(null);
+  const videoRef = useRef<HTMLIFrameElement>(null);
 
   useEffect(() => {
-    const filtered = videos.filter(event => 
-      event.name.toLowerCase().includes(searchTerm.toLowerCase())
+    const filtered = videos.filter(gallery => 
+      gallery.title.toLowerCase().includes(searchTerm.toLowerCase())
     );
     const sorted = [...filtered].sort((a, b) => {
       if (sortOrder === 'asc') {
-        return new Date(a.date).getTime() - new Date(b.date).getTime();
+        return a.title.localeCompare(b.title);
       } else {
-        return new Date(b.date).getTime() - new Date(a.date).getTime();
+        return b.title.localeCompare(a.title);
       }
     });
-    setFilteredEvents(sorted);
+    setFilteredGalleries(sorted);
   }, [searchTerm, sortOrder, videos]);
 
   const nextVideo = () => {
-    if (selectedEvent) {
+    if (selectedGallery) {
       setCurrentVideoIndex((prevIndex) => 
-        (prevIndex + 1) % selectedEvent.videos.length
+        (prevIndex + 1) % selectedGallery.videos.length
       );
     }
   };
 
   const prevVideo = () => {
-    if (selectedEvent) {
+    if (selectedGallery) {
       setCurrentVideoIndex((prevIndex) => 
-        (prevIndex - 1 + selectedEvent.videos.length) % selectedEvent.videos.length
+        (prevIndex - 1 + selectedGallery.videos.length) % selectedGallery.videos.length
       );
     }
   };
@@ -78,6 +67,16 @@ export const VideoGallery = ({
     setSortOrder(order);
   }, []);
 
+  const getVideoThumbnail = (url: string) => {
+    const videoId = url.split('v=')[1]?.split('&')[0];
+    return videoId ? `https://img.youtube.com/vi/${videoId}/hqdefault.jpg` : '';
+  };
+
+  const getEmbedUrl = (url: string) => {
+    const videoId = url.split('v=')[1]?.split('&')[0];
+    return videoId ? `https://www.youtube.com/embed/${videoId}` : url;
+  };
+
   return (
     <div className={cn("min-h-screen bg-gray-100", className)}>
        <header className="sticky top-0 z-50 bg-white shadow-sm">
@@ -85,37 +84,33 @@ export const VideoGallery = ({
       </header>
 
       <main className="max-w-7xl mx-auto px-4 py-8">
-        {filteredEvents.map((event) => (
+        {filteredGalleries.map((gallery) => (
           <motion.section
-            key={event.id}
+            key={gallery.id}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
             className="mb-12 overflow-hidden"
           >
             <div className="p-6 border-b border-gray-200">
-              <h2 className="text-2xl font-bold text-purple-800">{event.name}</h2>
-              <p className="text-gray-600 flex items-center mt-2">
-                <Calendar size={18} className="mr-2" />
-                {event.date}
-              </p>
+              <h2 className="text-2xl font-bold text-purple-800">{gallery.title}</h2>
             </div>
             <div className="p-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-              {event.videos.map((video, videoIndex) => (
+              {gallery.videos.map((video, videoIndex) => (
                 <motion.div
-                  key={`${event.id}-${videoIndex}`}
+                  key={`${gallery.id}-${videoIndex}`}
                   whileHover={{ scale: 1.05 }}
                   transition={{ duration: 0.2 }}
                   className="relative group cursor-pointer"
                   onClick={() => {
-                    setSelectedEvent(event);
+                    setSelectedGallery(gallery);
                     setCurrentVideoIndex(videoIndex);
                   }}
                 >
                   <div className="relative w-full h-48">
                     <img
-                      src={video.thumbnail}
-                      alt={`${event.name} - ${video.title}`}
+                      src={getVideoThumbnail(video.url)}
+                      alt={video.title}
                       className="w-full h-full object-cover rounded-lg shadow-md"
                     />
                     <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-all duration-300 rounded-lg flex items-center justify-center">
@@ -123,6 +118,9 @@ export const VideoGallery = ({
                     </div>
                   </div>
                   <p className="mt-2 text-sm font-medium text-gray-800">{video.title}</p>
+                  {video.description && (
+                    <p className="mt-1 text-xs text-gray-600">{video.description}</p>
+                  )}
                 </motion.div>
               ))}
             </div>
@@ -131,7 +129,7 @@ export const VideoGallery = ({
       </main>
 
       <AnimatePresence>
-        {selectedEvent && (
+        {selectedGallery && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -143,26 +141,24 @@ export const VideoGallery = ({
                 variant="ghost"
                 size="icon"
                 className="absolute top-4 z-[210] right-4 text-white"
-                onClick={() => setSelectedEvent(null)}
+                onClick={() => setSelectedGallery(null)}
               >
                 <X size={24} />
               </Button>
               <div className="relative w-full max-w-4xl aspect-video">
-                <video
+                <iframe
                   ref={videoRef}
-                  src={selectedEvent.videos[currentVideoIndex].src}
+                  src={getEmbedUrl(selectedGallery.videos[currentVideoIndex].url)}
                   className="w-full h-full rounded-lg"
-                  controls
-                  autoPlay
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
                 />
               </div>
               <div className="mt-4 text-white text-center">
-                <h2 className="text-2xl font-bold mb-2">{selectedEvent.videos[currentVideoIndex].title}</h2>
-                <p className="text-lg mb-2">{selectedEvent.name}</p>
-                <p className="text-sm flex items-center justify-center">
-                  <Calendar size={14} className="mr-1" />
-                  {selectedEvent.date}
-                </p>
+                <h2 className="text-2xl font-bold mb-2">{selectedGallery.videos[currentVideoIndex].title}</h2>
+                {selectedGallery.videos[currentVideoIndex].description && (
+                  <p className="text-lg mb-2">{selectedGallery.videos[currentVideoIndex].description}</p>
+                )}
               </div>
               <div className="absolute left-4 top-1/2 transform -translate-y-1/2">
                 <Button
@@ -186,7 +182,7 @@ export const VideoGallery = ({
               </div>
               <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2">
                 <div className="flex space-x-2">
-                  {selectedEvent.videos.map((_, index) => (
+                  {selectedGallery.videos.map((_, index) => (
                     <button
                       key={index}
                       aria-label={`Go to video ${index + 1}`}

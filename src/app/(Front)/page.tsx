@@ -29,24 +29,15 @@ export default async function Page() {
     getStats(language)
   ]);
   
+  console.log('Stats Response:', JSON.stringify(statsResponse, null, 2));
+  console.log('Language:', language);
+  
   if (!heroResponse.success || !mediaResponse.success || !programsResponse.success || !safeguardsResponse.success || !statsResponse.success) {
     console.error('Failed to fetch data:', heroResponse.error || mediaResponse.error || programsResponse.error || safeguardsResponse.error || statsResponse.error);
     return null;
   }
 
-  if (!heroResponse.success || !heroResponse.data?.length) {
-    console.error('No hero data available:', heroResponse);
-    return null;
-  }
-
-  if (!statsResponse.success || !statsResponse.data?.length) {
-    console.error('No stats data available:', statsResponse);
-    return null;
-  }
-
-  console.log('Hero data:', heroResponse.data);
-  console.log('Stats data:', statsResponse.data);
-
+<
   return (
     <main className="relative">
       <Hero steps={heroResponse.data} />
