@@ -80,5 +80,8 @@
     "tailwindcss-rtl": "^0.9.0",
     "ts-node": "^10.9.2",
     "typescript": "^5"
+  },
+  "prisma": {
+    "seed": "node scripts/seed-stats.js && node scripts/seed-hero.js"
   }
 }

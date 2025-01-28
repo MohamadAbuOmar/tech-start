@@ -4,52 +4,16 @@ import { motion, AnimatePresence, useAnimation } from "framer-motion";
 import { useState, useEffect, useRef, useCallback } from "react";
 import { RainbowButton } from "../../ui/rainbow-button";
 import { Navbar } from "../Nav/Navbar";
-import dynamic from 'next/dynamic';
+import Image from "next/image";
 import AnimatedNetworkBackground from "../Nav/AnimatedBackground";
 import { useLanguage } from "@/context/LanguageContext";
 import { LocalizedHeroStep } from "@/app/actions/pages/hero";
-
-const Lottie = dynamic(() => import('lottie-react'), { ssr: false });
-
-// Map animation files to step titles
-const getAnimationData = async (title: string) => {
-  switch (title) {
-    case "Innovation Hub":
-      return (await import("../../../../public/svg/Innovation Hub.json")).default;
-    case "Market Growth":
-      return (await import("../../../../public/svg/Market Growth.json")).default;
-    case "Talent Development":
-      return (await import("../../../../public/svg/Talent Development .json")).default;
-    case "IT Infrastructure":
-      return (await import("../../../../public/svg/IT Infrastructure .json")).default;
-    default:
-      return (await import("../../../../public/svg/Innovation Hub.json")).default;
-  }
-};
 
 const STEP_DURATION = 5000;
 
 interface ClientHeroContentProps {
   steps: LocalizedHeroStep[];
 }
-
-const ClientLottie = ({ title, className }: { title: string; className: string }) => {
-  const [animationData, setAnimationData] = useState<Record<string, unknown> | null>(null);
-
-  useEffect(() => {
-    getAnimationData(title).then(setAnimationData);
-  }, [title]);
-
-  if (!animationData) return null;
-
-  return (
-    <Lottie
-      animationData={animationData}
-      loop={true}
-      className={className}
-    />
-  );
-};
 
 const ClientHeroContent = ({ steps }: ClientHeroContentProps) => {
   const { language, isRTL } = useLanguage();
@@ -191,12 +155,13 @@ const ClientHeroContent = ({ steps }: ClientHeroContentProps) => {
                 style={{ boxShadow: `0 0 40px ${steps[currentStep].color}30` }}
               >
                 <div className={isRTL ? 'transform scale-x-[-1]' : ''}>
-                  {typeof window !== 'undefined' && (
-                    <ClientLottie
-                      title={steps[currentStep].title}
-                      className="w-full h-full object-cover"
-                    />
-                  )}
+                  <Image
+                    src={steps[currentStep].imageUrl}
+                    alt={steps[currentStep].title}
+                    fill
+                    className="object-cover"
+                    priority
+                  />
                 </div>
                 <div
                   className="absolute inset-0 bg-gradient-to-t from-white via-transparent to-transparent"
