@@ -11,7 +11,10 @@ interface ClientStatsCountUpProps {
 export default function ClientStatsCountUp({ initialStats }: ClientStatsCountUpProps) {
   const [stats] = useState<LocalizedStat[]>(initialStats);
 
-  if (!stats.length) {
+  console.log('Initial stats:', JSON.stringify(initialStats, null, 2));
+  console.log('Current stats:', JSON.stringify(stats, null, 2));
+
+  if (!stats?.length) {
     return null;
   }
 

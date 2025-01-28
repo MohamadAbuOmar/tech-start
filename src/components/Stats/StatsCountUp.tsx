@@ -6,8 +6,8 @@ import { Building, Briefcase, Building2, DollarSign } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
 import { LocalizedStat } from "@/app/actions/pages/stats";
 
-const getIconByType = (type: string) => {
-  switch (type) {
+const getIconByType = (icon: string) => {
+  switch (icon) {
     case 'firms':
       return Building;
     case 'jobs':
@@ -48,7 +48,7 @@ export default function StatsCountUp({ stats }: StatsCountUpProps) {
                 key={stat.id} 
                 name={stat.name}
                 value={stat.value}
-                icon={getIconByType(stat.type)}
+                icon={getIconByType(stat.icon)}
               />
             ))}
           </dl>
@@ -67,7 +67,10 @@ function Stat({
   value: number;
   icon: React.ElementType;
 }) {
-  const { count, ref, controls } = useCountUp(value);
+  const { count, ref, controls } = useCountUp(value || 0);
+  const { language, isRTL } = useLanguage();
+
+  console.log('Rendering Stat:', { name, value, count });
 
   return (
     <motion.div
@@ -84,12 +87,12 @@ function Stat({
         {name}
       </dt>
       <dd className="mt-auto">
-        <div className={`flex items-baseline ${isRTL ? 'flex-row-reverse' : ''}`}>
+        <div className={`flex items-baseline ${isRTL ? 'flex-row-reverse justify-end' : 'justify-start'} gap-2`}>
           <p className="text-4xl font-bold tracking-tight text-[#142451]">
-            {count.toLocaleString(language === 'en' ? 'en-US' : 'ar-SA')}
+            {value?.toLocaleString(language === 'en' ? 'en-US' : 'ar-SA')}
           </p>
-          <p className={`${isRTL ? 'ml-2' : 'mr-2'} text-sm font-medium text-[#862996]`}>
-            {language === 'en' ? 'total' : 'المجموع'}
+          <p className="text-sm font-medium text-[#862996]">
+            {language === 'en' ? ' total' : ' المجموع'}
           </p>
         </div>
         <div className="mt-4 h-1.5 w-full bg-gray-200 rounded-full overflow-hidden">
