@@ -6,11 +6,14 @@ import { cache } from "react";
 import db from "@/app/db/db";
 import { ApiResponse } from "@/types/api";
 
+import { Gallery, Image, Video, VideoGallery } from "@prisma/client";
+
 export interface LocalizedImage {
   id: string;
   url: string;
   title: string | null;
   featured: boolean;
+  type: string;
 }
 
 export interface LocalizedGallery {
@@ -25,6 +28,7 @@ export interface LocalizedVideo {
   title: string;
   description: string | null;
   type: string;
+  featured: boolean;
 }
 
 export interface LocalizedVideoGallery {
@@ -51,7 +55,8 @@ export const getGalleries = cache(async (language: 'en' | 'ar' = 'en'): Promise<
         title: image.title_en && image.title_ar ? 
           (language === 'en' ? image.title_en : image.title_ar) : 
           null,
-        featured: image.featured
+        featured: image.featured ?? false,
+        type: image.type ?? 'image'
       }))
     }));
 
@@ -95,7 +100,8 @@ export const getVideoGalleries = cache(async (language: 'en' | 'ar' = 'en'): Pro
         description: video.description_en && video.description_ar ? 
           (language === 'en' ? video.description_en : video.description_ar) : 
           null,
-        type: video.type
+        type: video.type ?? 'local',
+        featured: video.featured ?? false
       }))
     }));
 
