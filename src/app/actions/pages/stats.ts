@@ -2,7 +2,7 @@
 
 import { cache } from "react";
 import db from "@/app/db/db";
-import { ApiResponse } from "@/types/api";
+import { ApiResponse } from "../../../types/api";
 
 export interface LocalizedStat {
   id: string;
@@ -13,6 +13,7 @@ export interface LocalizedStat {
 
 export const getStats = cache(async (language: 'en' | 'ar' = 'en'): Promise<ApiResponse<LocalizedStat[]>> => {
   try {
+    console.log('Fetching stats with language:', language);
     const stats = await db.stat.findMany({
       select: {
         id: true,
@@ -22,6 +23,8 @@ export const getStats = cache(async (language: 'en' | 'ar' = 'en'): Promise<ApiR
         icon: true
       }
     });
+    
+    console.log('Raw stats from DB:', stats);
 
     const localizedStats = stats.map(stat => ({
       id: stat.id,
