@@ -23,7 +23,8 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const cookieStore = await cookies();
-  const language = (cookieStore.get('NEXT_LOCALE')?.value || 'en') as 'en' | 'ar';
+  const pathname = cookieStore.get('NEXT_PATHNAME')?.value || '';
+  const language = pathname.includes('/ar/') ? 'ar' : 'en';
   const footerResponse = await getFooter(language);
 
   if (!footerResponse.success) {
