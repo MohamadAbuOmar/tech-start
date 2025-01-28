@@ -24,14 +24,39 @@ export const getStats = cache(async (language: 'en' | 'ar' = 'en'): Promise<ApiR
       }
     });
     
-    console.log('Raw stats from DB:', stats);
+<<
 
-    const localizedStats = stats.map(stat => ({
-      id: stat.id,
-      name: language === 'en' ? stat.name_en : stat.name_ar,
-      value: stat.value,
-      icon: stat.icon
-    }));
+    const localizedStats = stats.map(stat => {
+      const rawValue = stat.value;
+      console.log('Processing stat value:', {
+        id: stat.id,
+        rawValue,
+        type: typeof rawValue,
+        name_en: stat.name_en,
+        name_ar: stat.name_ar
+      });
+
+      let parsedValue: number;
+      if (typeof rawValue === 'string') {
+        parsedValue = parseInt(rawValue.replace(/[^\d]/g, ''), 10);
+      } else if (typeof rawValue === 'number') {
+        parsedValue = rawValue;
+      } else {
+        parsedValue = 0;
+      }
+
+      const finalValue = isNaN(parsedValue) ? 0 : parsedValue;
+      console.log('Processed stat value:', { id: stat.id, rawValue, parsedValue, finalValue });
+
+      return {
+        id: stat.id,
+        name: language === 'en' ? stat.name_en : stat.name_ar,
+        value: finalValue,
+        icon: stat.icon
+      };
+    });
+
+    console.log('Localized stats:', JSON.stringify(localizedStats, null, 2));
 
     return {
       success: true,

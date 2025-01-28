@@ -1,0 +1,10 @@
+- [x] Stats ✓ (displays correct values, animations working)
+- [x] Hero ✓ (displays correct content in both languages, images loading properly)
+- [ ] Programs Section
+- [ ] Media Center
+- [ ] Safeguards Banner
+- [ ] About Us and Who We Are
+- [ ] Partners
+- [ ] Palestine Leads and Beneficiaries
+- [ ] FAQs, Gallery, Blog
+- [ ] Video Gallery

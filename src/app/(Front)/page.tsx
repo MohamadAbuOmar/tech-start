@@ -37,11 +37,7 @@ export default async function Page() {
     return null;
   }
 
-  if (!statsResponse.data?.length) {
-    console.error('No stats data available');
-    return null;
-  }
-
+<
   return (
     <main className="relative">
       <Hero steps={heroResponse.data} />
