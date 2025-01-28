@@ -1,12 +1,1 @@
-- [x] Stats ✓ (displays correct values, animations working)
-- [x] Hero ✓ (displays correct content in both languages, images loading properly)
-- [x] Programs Section ✓ (displays correct content in both languages, dynamic colors working)
-- [x] Media Center ✓ (displays featured gallery images, language switching working)
-- [x] Safeguards Banner ✓ (displays correct content in both languages, styling maintained)
-- [x] About Us and Who We Are ✓ (displays correct content in both languages, maintains styling)
-- [x] Partners ✓ (displays correct content in both languages, images loading properly)
-- [x] Palestine Leads and Beneficiaries ✓ (displays correct content in both languages, maintains styling)
-- [x] FAQs ✓ (displays correct content in both languages, maintains styling)
-- [x] Gallery ✓ (displays correct content in both languages, maintains styling)
-- [x] Blog ✓ (displays correct content in both languages, maintains styling)
-- [x] Video Gallery ✓ (displays correct content in both languages, maintains styling, YouTube video display fixed)
+

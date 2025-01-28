@@ -92,10 +92,26 @@ export interface LocalizedHeroStep {
 
 export const getHeroSteps = cache(async (language: 'en' | 'ar' = 'en'): Promise<ApiResponse<LocalizedHeroStep[]>> => {
   try {
+    console.log('Fetching hero steps with language:', language);
     const steps = await db.heroStep.findMany({
-      orderBy: { order: 'asc' }
+      orderBy: { order: 'asc' },
+      select: {
+        id: true,
+        title_en: true,
+        title_ar: true,
+        tagline_en: true,
+        tagline_ar: true,
+        description_en: true,
+        description_ar: true,
+        color: true,
+        imageUrl: true,
+        order: true,
+        createdAt: true,
+        updatedAt: true
+      }
     });
     
+    console.log('Raw hero steps from DB:', steps);
     const localizedSteps = steps.map(step => ({
       id: step.id,
       title: language === 'en' ? step.title_en : step.title_ar,
