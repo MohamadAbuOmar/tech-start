@@ -6,8 +6,6 @@ import { cache } from "react";
 import db from "@/app/db/db";
 import { ApiResponse } from "@/types/api";
 
-import { Gallery, Image, Video, VideoGallery } from "@prisma/client";
-
 export interface LocalizedImage {
   id: string;
   url: string;

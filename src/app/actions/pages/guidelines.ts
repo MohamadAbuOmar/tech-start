@@ -11,12 +11,14 @@ export interface LocalizedGuideline {
   title: string;
   description: string;
   icon: string;
+  items: string[];
+  locations?: string[];
 }
 
 export const getGuidelines = cache(async (language: 'en' | 'ar' = 'en'): Promise<ApiResponse<LocalizedGuideline[]>> => {
   try {
     const guidelines = await db.guideline.findMany({
-      orderBy: { createdAt: 'desc' },
+      orderBy: { createdAt: 'desc' }
     });
 
     const localizedGuidelines = guidelines.map(guideline => ({
@@ -24,6 +26,8 @@ export const getGuidelines = cache(async (language: 'en' | 'ar' = 'en'): Promise
       title: language === 'en' ? guideline.title_en : guideline.title_ar,
       description: language === 'en' ? guideline.description_en : guideline.description_ar,
       icon: guideline.icon,
+      items: language === 'en' ? guideline.items_en : guideline.items_ar,
+      locations: language === 'en' ? guideline.locations_en : guideline.locations_ar,
     }));
 
     return {

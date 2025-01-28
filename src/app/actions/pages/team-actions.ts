@@ -7,6 +7,17 @@ import db from "@/app/db/db"
 import { revalidatePath } from "next/cache"
 import { ApiResponse } from "@/types/api"
 
+export interface LocalizedTeamMember {
+  id: string;
+  name: string;
+  title: string;
+  description: string;
+  imageUrl: string;
+  order?: number;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
 export type TeamMemberData = {
   nameEn: string
   nameAr: string
@@ -15,28 +26,26 @@ export type TeamMemberData = {
   descriptionEn: string
   descriptionAr: string
   imageUrl: string
-}
-
-export interface LocalizedTeamMember {
-  id: string
-  name: string
-  jobTitle: string
-  description: string
-  imageUrl: string
+  order?: number
 }
 
 export const getTeamMembers = cache(async (language: 'en' | 'ar' = 'en'): Promise<ApiResponse<LocalizedTeamMember[]>> => {
   try {
     const members = await db.teamMember.findMany({
-      orderBy: { createdAt: "desc" },
+      orderBy: {
+        createdAt: 'asc'
+      }
     });
 
     const localizedMembers = members.map(member => ({
       id: member.id,
       name: language === 'en' ? member.nameEn : member.nameAr,
-      jobTitle: language === 'en' ? member.jobTitleEn : member.jobTitleAr,
+      title: language === 'en' ? member.jobTitleEn : member.jobTitleAr,
       description: language === 'en' ? member.descriptionEn : member.descriptionAr,
       imageUrl: member.imageUrl,
+      order: member.order ?? 0,
+      createdAt: member.createdAt,
+      updatedAt: member.updatedAt,
     }));
 
     return {
@@ -60,7 +69,10 @@ export async function getTeamMemberById(id: string) {
 
 export async function createTeamMember(data: TeamMemberData) {
   const createdTeamMember = await db.teamMember.create({
-    data,
+    data: {
+      ...data,
+      order: data.order || 0
+    },
   })
 
   revalidatePath("/admin/pages/team")
@@ -70,7 +82,10 @@ export async function createTeamMember(data: TeamMemberData) {
 export async function updateTeamMember(id: string, data: TeamMemberData) {
   const updatedTeamMember = await db.teamMember.update({
     where: { id },
-    data,
+    data: {
+      ...data,
+      order: data.order || 0
+    },
   })
 
   revalidatePath("/admin/pages/team")

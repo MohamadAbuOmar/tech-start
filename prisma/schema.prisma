@@ -52,7 +52,12 @@ model Image {
   createdAt DateTime @default(now())
   galleryId String
   featured  Boolean  @default(false)
+  type      String   @default("image")
+  title_en  String?
+  title_ar  String?
   gallery   Gallery  @relation(fields: [galleryId], references: [id])
+
+  @@index([featured])
 }
 
 model VideoGallery {
@@ -74,7 +79,14 @@ model Video {
   createdAt      DateTime     @default(now())
   galleryId      String
   type           String       @default("local")
+  featured       Boolean      @default(false)
+  title_en       String
+  title_ar       String
+  description_en String?
+  description_ar String?
   gallery        VideoGallery @relation(fields: [galleryId], references: [id])
+
+  @@index([featured])
 }
 
 model HeroStep {
@@ -112,6 +124,7 @@ model Program {
   nameColor      String   @default("#1b316e")
   descColor      String   @default("#862996")
   order          Int      @default(0)
+  slug           String?  @unique
   createdAt      DateTime @default(now())
   updatedAt      DateTime @default(now())
 
@@ -243,8 +256,11 @@ model TeamMember {
   descriptionEn String
   descriptionAr String
   imageUrl      String
+  order         Int      @default(0)
   createdAt     DateTime @default(now())
   updatedAt     DateTime @default(now())
+
+  @@index([order])
 }
 
 model WorkWithUs {
@@ -376,6 +392,21 @@ enum PartnerType {
   PROJECT_OF
   FUNDED_BY
   IMPLEMENTED_BY
+}
+
+model Guideline {
+  id             String   @id @default(cuid())
+  title_en       String
+  title_ar       String
+  description_en String
+  description_ar String
+  icon           String
+  items_en       String[]
+  items_ar       String[]
+  locations_en   String[]
+  locations_ar   String[]
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 }
 
 enum WorkType {
