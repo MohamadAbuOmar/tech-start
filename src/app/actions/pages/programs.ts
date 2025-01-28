@@ -2,19 +2,22 @@
 
 import { cache } from "react";
 import db from "@/app/db/db";
-import { ApiResponse } from "@/types/api";
+import { ApiResponse } from "../../../types/api";
 
 export interface LocalizedProgram {
   id: string;
   name: string;
   description: string;
   imageUrl: string;
+  nameColor?: string;
+  descColor?: string;
+  slug?: string;
 }
 
 export const getPioneerProgram = cache(async (language: 'en' | 'ar' = 'en'): Promise<ApiResponse<LocalizedProgram>> => {
   try {
     const program = await db.program.findFirst({
-      where: { slug: 'pioneer' }
+      where: { name_en: 'Pioneer' }
     });
 
     if (!program) {
@@ -28,7 +31,10 @@ export const getPioneerProgram = cache(async (language: 'en' | 'ar' = 'en'): Pro
       id: program.id,
       name: language === 'en' ? program.name_en : program.name_ar,
       description: language === 'en' ? program.description_en : program.description_ar,
-      imageUrl: program.imageUrl
+      imageUrl: program.imageUrl,
+      nameColor: program.nameColor,
+      descColor: program.descColor,
+      order: program.order
     };
 
     return {
@@ -47,7 +53,7 @@ export const getPioneerProgram = cache(async (language: 'en' | 'ar' = 'en'): Pro
 export const getUpskillProgram = cache(async (language: 'en' | 'ar' = 'en'): Promise<ApiResponse<LocalizedProgram>> => {
   try {
     const program = await db.program.findFirst({
-      where: { slug: 'upskill' }
+      where: { name_en: 'Upskill' }
     });
 
     if (!program) {
@@ -61,7 +67,10 @@ export const getUpskillProgram = cache(async (language: 'en' | 'ar' = 'en'): Pro
       id: program.id,
       name: language === 'en' ? program.name_en : program.name_ar,
       description: language === 'en' ? program.description_en : program.description_ar,
-      imageUrl: program.imageUrl
+      imageUrl: program.imageUrl,
+      nameColor: program.nameColor,
+      descColor: program.descColor,
+      order: program.order
     };
 
     return {
@@ -87,7 +96,10 @@ export const getPrograms = cache(async (language: 'en' | 'ar' = 'en'): Promise<A
       id: program.id,
       name: language === 'en' ? program.name_en : program.name_ar,
       description: language === 'en' ? program.description_en : program.description_ar,
-      imageUrl: program.imageUrl
+      imageUrl: program.imageUrl,
+      nameColor: program.nameColor,
+      descColor: program.descColor,
+      order: program.order
     }));
 
     return {

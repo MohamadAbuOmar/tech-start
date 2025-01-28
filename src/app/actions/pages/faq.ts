@@ -32,12 +32,33 @@ export const getFaqCategories = cache(async (language: 'en' | 'ar' = 'en'): Prom
       orderBy: { order: 'asc' },
     });
 
-    const localizedCategories = categories.map(category => ({
+    const localizedCategories = categories.map((category: {
+      id: string;
+      nameEn: string;
+      nameAr: string;
+      slug: string;
+      order: number;
+      faqs: {
+        id: string;
+        questionEn: string;
+        questionAr: string;
+        answerEn: string;
+        answerAr: string;
+        order: number;
+      }[];
+    }) => ({
       id: category.id,
       name: language === 'en' ? category.nameEn : category.nameAr,
       slug: category.slug,
       order: category.order,
-      faqs: category.faqs.map(faq => ({
+      faqs: category.faqs.map((faq: {
+        id: string;
+        questionEn: string;
+        questionAr: string;
+        answerEn: string;
+        answerAr: string;
+        order: number;
+      }) => ({
         id: faq.id,
         question: language === 'en' ? faq.questionEn : faq.questionAr,
         answer: language === 'en' ? faq.answerEn : faq.answerAr,

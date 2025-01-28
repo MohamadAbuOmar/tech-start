@@ -1,3 +1,5 @@
+export { default } from './(en)/page';
+=======
 import React from "react"
 import dynamic from "next/dynamic"
 import ProgramsSec from "@/components/shared/program/ProgramsSec"
