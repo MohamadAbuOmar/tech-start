@@ -82,6 +82,6 @@
     "typescript": "^5"
   },
   "prisma": {
-    "seed": "node scripts/seed-stats.js && node scripts/seed-hero.js"
+    "seed": "node scripts/seed-stats.js && node scripts/seed-hero.js && node scripts/seed-programs.js"
   }
 }
