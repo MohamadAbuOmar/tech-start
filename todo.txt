@@ -1,0 +1,10 @@
+- [x] Stats
+- [ ] Hero
+- [ ] Programs Section
+- [ ] Media Center
+- [ ] Safeguards Banner
+- [ ] About Us and Who We Are
+- [ ] Partners
+- [ ] Palestine Leads and Beneficiaries
+- [ ] FAQs, Gallery, Blog
+- [ ] Video Gallery
